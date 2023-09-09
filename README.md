@@ -17,6 +17,10 @@ pip install -e .
 
 ## Demo
 
+Model files can be downloaded from:
+- [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing)
+- [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip)
+
 Here is a simple demo to show how to use rtmlib to conduct pose estimation on a simgle image.
 
 ```python
