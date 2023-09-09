@@ -1,6 +1,11 @@
 # rtmlib
 
-rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc. 
+rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc. 
+
+Currently, rtmlib only requires these dependencies:
+- numpy
+- opencv-python
+- opencv-contrib-python
 
 ## Installation
 
