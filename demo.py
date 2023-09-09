@@ -4,9 +4,9 @@ import cv2
 
 from rtmlib import YOLOX, RTMPose
 
-device = 'cuda'
+device = 'cpu'
 # img = cv2.imread('./demo.jpg')
-cap = cv2.VideoCapture('./demo.mp4')
+cap = cv2.VideoCapture('./demo.jpg')
 
 det_model = YOLOX('./yolox_l.onnx',
                   model_input_size=(640, 640),
@@ -51,4 +51,4 @@ while cap.isOpened():
                                   2)
 
     cv2.imshow('img', img_show)
-    cv2.waitKey(1)
+    cv2.waitKey()
