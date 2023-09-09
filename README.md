@@ -15,8 +15,6 @@ pip install -e .
 Here is a simple demo to show how to use rtmlib to conduct pose estimation on a simgle image.
 
 ```python
-import time
-
 import cv2
 
 from rtmlib import YOLOX, RTMPose
