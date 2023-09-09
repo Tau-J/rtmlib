@@ -52,3 +52,5 @@ Here is also a demo to show how to use rtmlib to conduct pose estimation on a vi
 ```shell
 python demo.py
 ```
+
+<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/487f24e8-a7c6-4db9-b0f9-045f794ea94f">
