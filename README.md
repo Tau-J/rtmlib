@@ -59,3 +59,7 @@ python demo.py
 ```
 
 <img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/487f24e8-a7c6-4db9-b0f9-045f794ea94f">
+
+## Acknowledgement
+
+Our code is based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)

@@ -12,13 +12,13 @@ class RTMDet(BaseTool):
                  model_input_size: tuple = (640, 640),
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, device)
+        raise NotImplementedError
         
     def __call__(self, image: np.ndarray):
         image, ratio = self.preprocess(image)
         outputs = self.inference(image)
         # results = self.postprocess(outputs, center, scale)
-        print(outputs)
-        print(outputs.shape)
+
         return outputs
     
     def preprocess(self, img: np.ndarray):

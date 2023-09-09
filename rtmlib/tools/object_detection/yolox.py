@@ -1,3 +1,4 @@
+# Code modified from https://github.com/IDEA-Research/DWPose/blob/opencv_onnx/ControlNet-v1-1-nightly/annotator/dwpose/cv_ox_det.py  # noqa
 from typing import List, Tuple
 
 import cv2
