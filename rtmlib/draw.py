@@ -30,7 +30,7 @@ def draw_skeleton(img,
         scores = scores[None, :, :]
 
     num_instance = keypoints.shape[0]
-    if skeleton.startswith('mmpose'):
+    if skeleton.startswith('coco'):
         for i in range(num_instance):
             img = draw_mmpose(img, keypoints[i], scores[i], keypoint_info,
                               skeleton_info, kpt_thr, radius, line_width)
@@ -52,6 +52,7 @@ def draw_mmpose(img,
     assert len(keypoints.shape) == 2
 
     vis_kpt = [s >= kpt_thr for s in scores]
+    print(scores)
     link_dict = {}
     for i, kpt_info in keypoint_info.items():
         kpt_color = tuple(kpt_info['color'])
@@ -107,13 +108,11 @@ def draw_openpose(img,
         pt0, pt1 = link_dict[link[0]], link_dict[link[1]]
 
         link_color = ske_info['color']
-        kpt0 = keypoints[pt0]
-        kpt1 = keypoints[pt1]
-        s0 = scores[pt0]
-        s1 = scores[pt1]
+        kpt0, kpt1 = keypoints[pt0], keypoints[pt1]
+        s0, s1 = scores[pt0], scores[pt1]
 
-        if (kpt0[0] <= 0 or kpt0[1] >= w or kpt0[1] <= 0 or kpt0[1] >= h) and (
-                kpt1[0] <= 0 or kpt1[1] >= w or kpt1[1] <= 0 or kpt1[1] >= h
+        if (kpt0[0] <= 0 or kpt0[1] >= w or kpt0[1] <= 0 or kpt0[1] >= h
+                or kpt1[0] <= 0 or kpt1[1] >= w or kpt1[1] <= 0 or kpt1[1] >= h
                 or s0 < kpt_thr or s1 < kpt_thr or link_color is None):
             continue
 

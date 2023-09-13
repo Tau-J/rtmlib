@@ -86,7 +86,7 @@ python demo.py
 
 ### OpenPose-style visualization
 
-<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/fa39a503-bcb9-4199-8ad8-8413e7b65c96">
+<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/9afc996a-59e6-4200-a655-59dae10b46c4">
 
 ## Acknowledgement
 
