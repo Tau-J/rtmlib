@@ -32,17 +32,11 @@ pip install -e .
 
 ## Model Zoo
 
-### Detection
+Here are some models we have converted to onnx format.
 
-|  Model  |                                              Download                                              |
-| :-----: | :------------------------------------------------------------------------------------------------: |
-| YOLOX-l | [Google Drive](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing) |
-
-### Pose Estimation
-
-|   Model   |                                                                     Download                                                                     |
-| :-------: | :----------------------------------------------------------------------------------------------------------------------------------------------: |
-| RTMPose-m | [MMPose](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |
+|                                              Det                                              |                                                    Pose                                                     |
+| :-------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: |
+| [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing) | [RTMPose-m](<(https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip)>) |
 
 ## Demo
 
@@ -80,13 +74,11 @@ Here is also a demo to show how to use rtmlib to conduct pose estimation on a vi
 python demo.py
 ```
 
-### MMPose-style visualization
+### Visualization
 
-<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/c9e6fbaa-00f0-4961-ac87-d881edca778b">
-
-### OpenPose-style visualization
-
-<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/9afc996a-59e6-4200-a655-59dae10b46c4">
+|                                            MMPose-style                                             |                                            OpenPose-style                                             |
+| :-------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------: |
+| <img width="350" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/c9e6fbaa-00f0-4961-ac87-d881edca778b"> | <img width="350" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/9afc996a-59e6-4200-a655-59dae10b46c4"> |
 
 ## Acknowledgement
 
