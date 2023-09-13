@@ -1,4 +1,3 @@
-# Copyright (c) OpenMMLab. All rights reserved.
 from .rtmdet import RTMDet
 from .yolox import YOLOX
 

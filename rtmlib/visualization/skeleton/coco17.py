@@ -1,4 +1,3 @@
-# Copyright (c) OpenMMLab. All rights reserved.
 coco17 = dict(name='coco17',
               keypoint_info={
                   0:

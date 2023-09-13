@@ -1,4 +1,3 @@
-# Copyright (c) OpenMMLab. All rights reserved.
 import cv2
 
 from .visualization.skeleton import *  # noqa
