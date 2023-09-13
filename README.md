@@ -23,10 +23,11 @@ pip install -e .
 
 ## TODO
 
-\[\] Support skeleton visualization
-\[\] Support Pytorch backend
-\[\] Support ONNXRuntime backend
-\[\] Support TensorRT backend
+- [x] Support MMPose-style skeleton visualization
+- [ ] Support OpenPose-style skeleton visualization
+- [ ] Support Pytorch backend
+- [ ] Support ONNXRuntime backend
+- [ ] Support TensorRT backend
 
 ## Model Zoo
 
