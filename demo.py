@@ -4,12 +4,14 @@ import cv2
 
 from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
 
+# import numpy as np
+
 device = 'cpu'
 
 # img = cv2.imread('./demo.jpg')
 cap = cv2.VideoCapture('./demo.jpg')
 
-openpose_skeleton = True  # True for openpose-style, False for mmpose-style
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 det_model = YOLOX('./yolox_l.onnx', model_input_size=(640, 640), device=device)
 pose_model = RTMPose('./rtmpose.onnx',
@@ -39,6 +41,9 @@ while cap.isOpened():
     keypoints, scores = pose_model(frame, bboxes=bboxes)
     pose_time = time.time() - s
     print('pose: ', pose_time)
+
+    # if you want to use black background instead of original image,
+    # img_show = np.zeros(img_show.shape, dtype=np.uint8)
 
     img_show = draw_skeleton(
         img_show,

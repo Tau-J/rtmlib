@@ -62,7 +62,12 @@ keypoints, scores = pose_model(img, bboxes=bboxes)
 
 # visualize
 img_show = draw_bbox(img.copy(), bboxes)
+
+# if you want to use black background instead of original image,
+# img_show = np.zeros(img_show.shape, dtype=np.uint8)
+
 img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
+
 
 cv2.imshow('img', img_show)
 cv2.waitKey()
@@ -79,6 +84,7 @@ python demo.py
 |                                            MMPose-style                                             |                                            OpenPose-style                                             |
 | :-------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------: |
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/c9e6fbaa-00f0-4961-ac87-d881edca778b"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/9afc996a-59e6-4200-a655-59dae10b46c4"> |
+| <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/b12e5f60-fec0-42a1-b7b6-365e93894fb1"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/5acf7431-6ef0-44a8-ae52-9d8c8cb988c9"> |
 
 ## Acknowledgement
 
