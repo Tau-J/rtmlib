@@ -80,7 +80,13 @@ Here is also a demo to show how to use rtmlib to conduct pose estimation on a vi
 python demo.py
 ```
 
+### MMPose-style visualization
+
 <img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/c9e6fbaa-00f0-4961-ac87-d881edca778b">
+
+### OpenPose-style visualization
+
+<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/fa39a503-bcb9-4199-8ad8-8413e7b65c96">
 
 ## Acknowledgement
 
