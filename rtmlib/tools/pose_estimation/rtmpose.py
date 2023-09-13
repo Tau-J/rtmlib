@@ -3,7 +3,7 @@ from typing import List, Tuple
 import numpy as np
 
 from ..base import BaseTool
-from .post_processings import get_simcc_maximum
+from .post_processings import convert_coco17_to_openpose18, get_simcc_maximum
 from .pre_processings import bbox_xyxy2cs, top_down_affine
 
 
@@ -14,21 +14,31 @@ class RTMPose(BaseTool):
                  model_input_size: tuple = (288, 384),
                  mean: tuple = (123.675, 116.28, 103.53),
                  std: tuple = (58.395, 57.12, 57.375),
+                 to_openpose: bool = False,
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, mean, std, device)
+        self.to_openpose = to_openpose
 
     def __call__(self, image: np.ndarray, bboxes: list = []):
         if len(bboxes) == 0:
             bboxes = [[0, 0, image.shape[1], image.shape[0]]]
 
-        results = []
+        keypoints, scores = [], []
         for bbox in bboxes:
             img, center, scale = self.preprocess(image, bbox)
             outputs = self.inference(img)
             kpts, score = self.postprocess(outputs, center, scale)
 
-            results.append({'keypoints': kpts, 'scores': score})
-        return results
+            keypoints.append(kpts)
+            scores.append(score)
+
+        keypoints = np.concatenate(keypoints, axis=0)
+        scores = np.concatenate(scores, axis=0)
+
+        if self.to_openpose:
+            keypoints, scores = convert_coco17_to_openpose18(keypoints, scores)
+
+        return keypoints, scores
 
     def preprocess(self, img: np.ndarray, bbox: list):
         """Do preprocessing for RTMPose model inference.

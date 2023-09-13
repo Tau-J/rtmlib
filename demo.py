@@ -5,12 +5,16 @@ import cv2
 from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
 
 device = 'cpu'
+
 # img = cv2.imread('./demo.jpg')
 cap = cv2.VideoCapture('./demo.jpg')
+
+openpose_skeleton = True  # True for openpose-style, False for mmpose-style
 
 det_model = YOLOX('./yolox_l.onnx', model_input_size=(640, 640), device=device)
 pose_model = RTMPose('./rtmpose.onnx',
                      model_input_size=(192, 256),
+                     to_openpose=openpose_skeleton,
                      device=device)
 
 video_writer = None
@@ -27,19 +31,21 @@ while cap.isOpened():
     bboxes = det_model(frame)
     det_time = time.time() - s
     print('det: ', det_time)
+
     img_show = frame.copy()
     img_show = draw_bbox(img_show, bboxes)
 
     s = time.time()
-    res = pose_model(frame, bboxes=bboxes)
+    keypoints, scores = pose_model(frame, bboxes=bboxes)
     pose_time = time.time() - s
     print('pose: ', pose_time)
 
-    for each in res:
-        keypoints = each['keypoints']
-        scores = each['scores']
-
-        img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
+    img_show = draw_skeleton(
+        img_show,
+        keypoints,
+        scores,
+        skeleton='openpose18' if openpose_skeleton else 'coco17',
+        kpt_thr=0.5)
 
     cv2.imshow('img', img_show)
     cv2.waitKey()

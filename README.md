@@ -24,7 +24,8 @@ pip install -e .
 ## TODO
 
 - [x] Support MMPose-style skeleton visualization
-- [ ] Support OpenPose-style skeleton visualization
+- [x] Support OpenPose-style skeleton visualization
+- [ ] Support WholeBody
 - [ ] Support Pytorch backend
 - [ ] Support ONNXRuntime backend
 - [ ] Support TensorRT backend
@@ -63,16 +64,11 @@ pose_model = RTMPose('./rtmpose.onnx',
                      device=device)
 
 bboxes = det_model(img)
-results = pose_model(img, bboxes=bboxes)
+keypoints, scores = pose_model(img, bboxes=bboxes)
 
 # visualize
 img_show = draw_bbox(img.copy(), bboxes)
-
-for each in results:
-        keypoints = each['keypoints']
-        scores = each['scores']
-
-        img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
+img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
 
 cv2.imshow('img', img_show)
 cv2.waitKey()
