@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 from abc import ABCMeta, abstractmethod
 from typing import Any
 
@@ -12,6 +13,7 @@ OPENCV_DNN_SETTINGS = {
 
 
 class BaseTool(metaclass=ABCMeta):
+
     def __init__(self,
                  onnx_model: str = None,
                  model_input_size: tuple = None,

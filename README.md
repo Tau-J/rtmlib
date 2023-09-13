@@ -1,32 +1,55 @@
 # rtmlib
 
-rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc. 
+rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
 
-Currently, rtmlib only requires these dependencies:
+Basically, rtmlib only requires these dependencies:
+
 - numpy
 - opencv-python
 - opencv-contrib-python
+
+Optionally, you can use other common backends like pytorch, onnxruntime, tensorrt to accelerate the inference process.
 
 ## Installation
 
 ```shell
 git clone https://github.com/Tau-J/rtmlib.git
+cd rtmlib
+
+pip install -r requirements.txt
 
 pip install -e .
 ```
 
+## TODO
+
+\[\] Support skeleton visualization
+\[\] Support Pytorch backend
+\[\] Support ONNXRuntime backend
+\[\] Support TensorRT backend
+
+## Model Zoo
+
+### Detection
+
+|  Model  |                                              Download                                              |
+| :-----: | :------------------------------------------------------------------------------------------------: |
+| YOLOX-l | [Google Drive](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing) |
+
+### Pose Estimation
+
+|   Model   |                                                                     Download                                                                     |
+| :-------: | :----------------------------------------------------------------------------------------------------------------------------------------------: |
+| RTMPose-m | [MMPose](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |
+
 ## Demo
 
-Model files can be downloaded from:
-- [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing)
-- [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip)
-
-Here is a simple demo to show how to use rtmlib to conduct pose estimation on a simgle image.
+Here is a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
 
 ```python
 import cv2
 
-from rtmlib import YOLOX, RTMPose
+from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
 
 device = 'cpu'
 img = cv2.imread('./demo.jpg')
@@ -39,18 +62,16 @@ pose_model = RTMPose('./rtmpose.onnx',
                      device=device)
 
 bboxes = det_model(img)
-res = pose_model(img, bboxes=bboxes)
+results = pose_model(img, bboxes=bboxes)
 
 # visualize
-for each in res:
-    p = each['keypoints']
-    K = p.shape[1]
-    for i in range(K):
-        img_show = cv2.circle(img_show,
-                                (int(p[0, i, 0]), int(p[0, i, 1])),
-                                2,
-                                (0, 0, 255),
-                                2)
+img_show = draw_bbox(img.copy(), bboxes)
+
+for each in results:
+        keypoints = each['keypoints']
+        scores = each['scores']
+
+        img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
 
 cv2.imshow('img', img_show)
 cv2.waitKey()
@@ -62,7 +83,7 @@ Here is also a demo to show how to use rtmlib to conduct pose estimation on a vi
 python demo.py
 ```
 
-<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/487f24e8-a7c6-4db9-b0f9-045f794ea94f">
+<img width="713" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/c9e6fbaa-00f0-4961-ac87-d881edca778b">
 
 ## Acknowledgement
 

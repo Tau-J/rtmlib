@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 
 import numpy as np
 
@@ -33,7 +34,10 @@ def nms(boxes, scores, nms_thr):
 
 
 def multiclass_nms(boxes, scores, nms_thr, score_thr):
-    """Multiclass NMS implemented in Numpy. Class-aware version."""
+    """Multiclass NMS implemented in Numpy.
+
+    Class-aware version.
+    """
     final_dets = []
     num_classes = scores.shape[1]
     for cls_ind in range(num_classes):
@@ -48,8 +52,7 @@ def multiclass_nms(boxes, scores, nms_thr, score_thr):
             if len(keep) > 0:
                 cls_inds = np.ones((len(keep), 1)) * cls_ind
                 dets = np.concatenate(
-                    [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1
-                )
+                    [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1)
                 final_dets.append(dets)
     if len(final_dets) == 0:
         return None

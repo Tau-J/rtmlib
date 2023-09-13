@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 # Code modified from https://github.com/IDEA-Research/DWPose/blob/opencv_onnx/ControlNet-v1-1-nightly/annotator/dwpose/cv_ox_det.py  # noqa
 from typing import List, Tuple
 
@@ -9,18 +10,23 @@ from .post_processings import multiclass_nms
 
 
 class YOLOX(BaseTool):
+
     def __init__(self,
                  onnx_model: str = 'yolox-l-640x640',
                  model_input_size: tuple = (640, 640),
+                 nms_thr=0.45,
+                 score_thr=0.7,
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, device)
-        
+        self.nms_thr = nms_thr
+        self.score_thr = score_thr
+
     def __call__(self, image: np.ndarray):
         image, ratio = self.preprocess(image)
         outputs = self.inference(image)[0]
         results = self.postprocess(outputs, ratio)
         return results
-    
+
     def preprocess(self, img: np.ndarray):
         """Do preprocessing for RTMPose model inference.
 
@@ -39,7 +45,7 @@ class YOLOX(BaseTool):
                 dtype=np.uint8) * 114
         else:
             padded_img = np.ones(self.model_input_size, dtype=np.uint8) * 114
-        
+
         ratio = min(self.model_input_size[0] / img.shape[0],
                     self.model_input_size[1] / img.shape[1])
         resized_img = cv2.resize(
@@ -48,10 +54,10 @@ class YOLOX(BaseTool):
             interpolation=cv2.INTER_LINEAR,
         ).astype(np.uint8)
         padded_shape = (int(img.shape[0] * ratio), int(img.shape[1] * ratio))
-        padded_img[: padded_shape[0], : padded_shape[1]] = resized_img
+        padded_img[:padded_shape[0], :padded_shape[1]] = resized_img
 
         return padded_img, ratio
-    
+
     def inference(self, img: np.ndarray):
         img = img.transpose((2, 0, 1))
         img = np.ascontiguousarray(img, dtype=np.float32)
@@ -62,10 +68,11 @@ class YOLOX(BaseTool):
         outputs = self.session.forward(outNames)
         return outputs
 
-    def postprocess(self,
-                    outputs: List[np.ndarray],
-                    ratio: float = 1.,
-                    ) -> Tuple[np.ndarray, np.ndarray]:
+    def postprocess(
+        self,
+        outputs: List[np.ndarray],
+        ratio: float = 1.,
+    ) -> Tuple[np.ndarray, np.ndarray]:
         grids = []
         expanded_strides = []
         strides = [8, 16, 32]
@@ -90,12 +97,15 @@ class YOLOX(BaseTool):
         scores = predictions[:, 4:5] * predictions[:, 5:]
 
         boxes_xyxy = np.ones_like(boxes)
-        boxes_xyxy[:, 0] = boxes[:, 0] - boxes[:, 2]/2.
-        boxes_xyxy[:, 1] = boxes[:, 1] - boxes[:, 3]/2.
-        boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2]/2.
-        boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3]/2.
+        boxes_xyxy[:, 0] = boxes[:, 0] - boxes[:, 2] / 2.
+        boxes_xyxy[:, 1] = boxes[:, 1] - boxes[:, 3] / 2.
+        boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2] / 2.
+        boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.
         boxes_xyxy /= ratio
-        dets = multiclass_nms(boxes_xyxy, scores, nms_thr=0.45, score_thr=0.1)
+        dets = multiclass_nms(boxes_xyxy,
+                              scores,
+                              nms_thr=self.nms_thr,
+                              score_thr=self.score_thr)
         if dets is not None:
             pack_dets = (dets[:, :4], dets[:, 4], dets[:, 5])
             final_boxes, final_scores, final_cls_inds = pack_dets

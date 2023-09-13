@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 from typing import List, Tuple
 
 import numpy as np
@@ -8,6 +9,7 @@ from .pre_processings import bbox_xyxy2cs, top_down_affine
 
 
 class RTMPose(BaseTool):
+
     def __init__(self,
                  onnx_model: str = 'rtmpose-l-384x288',
                  model_input_size: tuple = (288, 384),
@@ -15,23 +17,20 @@ class RTMPose(BaseTool):
                  std: tuple = (58.395, 57.12, 57.375),
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, mean, std, device)
-        
+
     def __call__(self, image: np.ndarray, bboxes: list = []):
         if len(bboxes) == 0:
             bboxes = [[0, 0, image.shape[1], image.shape[0]]]
-        
+
         results = []
         for bbox in bboxes:
             img, center, scale = self.preprocess(image, bbox)
             outputs = self.inference(img)
             kpts, score = self.postprocess(outputs, center, scale)
-            
-            results.append({
-                'keypoints': kpts,
-                'score': score
-            })
+
+            results.append({'keypoints': kpts, 'scores': score})
         return results
-    
+
     def preprocess(self, img: np.ndarray, bbox: list):
         """Do preprocessing for RTMPose model inference.
 
@@ -51,8 +50,8 @@ class RTMPose(BaseTool):
         center, scale = bbox_xyxy2cs(bbox, padding=1.25)
 
         # do affine transformation
-        resized_img, scale = top_down_affine(self.model_input_size,
-                                             scale, center, img)
+        resized_img, scale = top_down_affine(self.model_input_size, scale,
+                                             center, img)
         # normalize image
         if self.mean is not None:
             self.mean = np.array(self.mean)
@@ -60,7 +59,7 @@ class RTMPose(BaseTool):
             resized_img = (resized_img - self.mean) / self.std
 
         return resized_img, center, scale
-    
+
     def inference(self, img: np.ndarray):
         """Inference RTMPose model.
 
@@ -81,12 +80,12 @@ class RTMPose(BaseTool):
 
         return outputs
 
-    def postprocess(self,
-                    outputs: List[np.ndarray],
-                    center: Tuple[int, int],
-                    scale: Tuple[int, int],
-                    simcc_split_ratio: float = 2.0
-                    ) -> Tuple[np.ndarray, np.ndarray]:
+    def postprocess(
+            self,
+            outputs: List[np.ndarray],
+            center: Tuple[int, int],
+            scale: Tuple[int, int],
+            simcc_split_ratio: float = 2.0) -> Tuple[np.ndarray, np.ndarray]:
         """Postprocess for RTMPose model output.
 
         Args:

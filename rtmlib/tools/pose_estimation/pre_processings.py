@@ -1,3 +1,4 @@
+# Copyright (c) OpenMMLab. All rights reserved.
 from typing import Tuple
 
 import cv2
@@ -152,7 +153,7 @@ def top_down_affine(input_size: dict, bbox_scale: dict, bbox_center: dict,
     bbox_scale = np.where(b_w > b_h * aspect_ratio,
                           np.hstack([b_w, b_w / aspect_ratio]),
                           np.hstack([b_h * aspect_ratio, b_h]))
-    
+
     # get the affine matrix
     center = bbox_center
     scale = bbox_scale
