@@ -15,8 +15,12 @@ class YOLOX(BaseTool):
                  model_input_size: tuple = (640, 640),
                  nms_thr=0.45,
                  score_thr=0.7,
+                 backend: str = 'opencv',
                  device: str = 'cpu'):
-        super().__init__(onnx_model, model_input_size, device)
+        super().__init__(onnx_model,
+                         model_input_size,
+                         backend=backend,
+                         device=device)
         self.nms_thr = nms_thr
         self.score_thr = score_thr
 
@@ -57,15 +61,15 @@ class YOLOX(BaseTool):
 
         return padded_img, ratio
 
-    def inference(self, img: np.ndarray):
-        img = img.transpose((2, 0, 1))
-        img = np.ascontiguousarray(img, dtype=np.float32)
+    # def inference(self, img: np.ndarray):
+    #     img = img.transpose((2, 0, 1))
+    #     img = np.ascontiguousarray(img, dtype=np.float32)
 
-        input = img[None, :, :, :]
-        outNames = self.session.getUnconnectedOutLayersNames()
-        self.session.setInput(input)
-        outputs = self.session.forward(outNames)
-        return outputs
+    #     input = img[None, :, :, :]
+    #     outNames = self.session.getUnconnectedOutLayersNames()
+    #     self.session.setInput(input)
+    #     outputs = self.session.forward(outNames)
+    #     return outputs
 
     def postprocess(
         self,

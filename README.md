@@ -19,6 +19,11 @@ cd rtmlib
 pip install -r requirements.txt
 
 pip install -e .
+
+# [optional]
+# pip install onnxruntime
+# or
+# pip install onnxruntime-gpu
 ```
 
 ## TODO
@@ -26,8 +31,7 @@ pip install -e .
 - [x] Support MMPose-style skeleton visualization
 - [x] Support OpenPose-style skeleton visualization
 - [ ] Support WholeBody
-- [ ] Support Pytorch backend
-- [ ] Support ONNXRuntime backend
+- [x] Support ONNXRuntime backend
 - [ ] Support TensorRT backend
 
 ## Model Zoo
@@ -48,13 +52,19 @@ import cv2
 from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
 
 device = 'cpu'
+backend = 'onnxruntime'  # opencv, onnxruntime
 img = cv2.imread('./demo.jpg')
+
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 det_model = YOLOX('./yolox_l.onnx',
                   model_input_size=(640, 640),
+                  backend=backend,
                   device=device)
 pose_model = RTMPose('./rtmpose.onnx',
                      model_input_size=(192, 256),
+                     to_openpose=openpose_skeleton,
+                     backend=backend,
                      device=device)
 
 bboxes = det_model(img)

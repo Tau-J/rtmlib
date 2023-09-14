@@ -11,8 +11,9 @@ class RTMDet(BaseTool):
     def __init__(self,
                  onnx_model: str = 'rtmdet-m-640x640',
                  model_input_size: tuple = (640, 640),
+                 backend: str = 'opencv',
                  device: str = 'cpu'):
-        super().__init__(onnx_model, model_input_size, device)
+        super().__init__(onnx_model, model_input_size, backend, device)
         raise NotImplementedError
 
     def __call__(self, image: np.ndarray):
@@ -53,15 +54,15 @@ class RTMDet(BaseTool):
 
         return padded_img, ratio
 
-    def inference(self, img: np.ndarray):
-        img = img.transpose((2, 0, 1))
-        img = np.ascontiguousarray(img, dtype=np.float32)
+    # def inference(self, img: np.ndarray):
+    #     img = img.transpose((2, 0, 1))
+    #     img = np.ascontiguousarray(img, dtype=np.float32)
 
-        input = [img]
-        outNames = self.session.getUnconnectedOutLayersNames()
-        self.session.setInput(input)
-        outputs = self.session.forward(outNames)
-        return outputs
+    #     input = [img]
+    #     outNames = self.session.getUnconnectedOutLayersNames()
+    #     self.session.setInput(input)
+    #     outputs = self.session.forward(outNames)
+    #     return outputs
 
     def postprocess(
             self,

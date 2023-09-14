@@ -6,17 +6,22 @@ from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
 
 # import numpy as np
 
-device = 'cpu'
+device = 'cuda'
+backend = 'onnxruntime'  # opencv, onnxruntime
 
 # img = cv2.imread('./demo.jpg')
 cap = cv2.VideoCapture('./demo.jpg')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-det_model = YOLOX('./yolox_l.onnx', model_input_size=(640, 640), device=device)
+det_model = YOLOX('./yolox_l.onnx',
+                  model_input_size=(640, 640),
+                  backend=backend,
+                  device=device)
 pose_model = RTMPose('./rtmpose.onnx',
                      model_input_size=(192, 256),
                      to_openpose=openpose_skeleton,
+                     backend=backend,
                      device=device)
 
 video_writer = None
@@ -52,5 +57,6 @@ while cap.isOpened():
         skeleton='openpose18' if openpose_skeleton else 'coco17',
         kpt_thr=0.5)
 
+    img_show = cv2.resize(img_show, (960, 540))
     cv2.imshow('img', img_show)
-    cv2.waitKey()
+    cv2.waitKey(10)

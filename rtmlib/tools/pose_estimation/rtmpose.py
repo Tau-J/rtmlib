@@ -15,8 +15,10 @@ class RTMPose(BaseTool):
                  mean: tuple = (123.675, 116.28, 103.53),
                  std: tuple = (58.395, 57.12, 57.375),
                  to_openpose: bool = False,
+                 backend: str = 'opencv',
                  device: str = 'cpu'):
-        super().__init__(onnx_model, model_input_size, mean, std, device)
+        super().__init__(onnx_model, model_input_size, mean, std, backend,
+                         device)
         self.to_openpose = to_openpose
 
     def __call__(self, image: np.ndarray, bboxes: list = []):
@@ -69,25 +71,25 @@ class RTMPose(BaseTool):
 
         return resized_img, center, scale
 
-    def inference(self, img: np.ndarray):
-        """Inference RTMPose model.
+    # def inference(self, img: np.ndarray):
+    #     """Inference RTMPose model.
 
-        Args:
-            sess (ort.InferenceSession): ONNXRuntime session.
-            img (np.ndarray): Input image in shape.
+    #     Args:
+    #         sess (ort.InferenceSession): ONNXRuntime session.
+    #         img (np.ndarray): Input image in shape.
 
-        Returns:
-            outputs (np.ndarray): Output of RTMPose model.
-        """
-        # build input
-        input = img.transpose(2, 0, 1)[None, :, :, :]
+    #     Returns:
+    #         outputs (np.ndarray): Output of RTMPose model.
+    #     """
+    #     # build input
+    #     input = img.transpose(2, 0, 1)[None, :, :, :]
 
-        # run model
-        outNames = self.session.getUnconnectedOutLayersNames()
-        self.session.setInput(input)
-        outputs = self.session.forward(outNames)
+    #     # run model
+    #     outNames = self.session.getUnconnectedOutLayersNames()
+    #     self.session.setInput(input)
+    #     outputs = self.session.forward(outNames)
 
-        return outputs
+    #     return outputs
 
     def postprocess(
             self,
