@@ -1,8 +1,11 @@
+import os
 from abc import ABCMeta, abstractmethod
 from typing import Any
 
 import cv2
 import numpy as np
+
+from .file import download_checkpoint
 
 RTMLIB_SETTINGS = {
     'opencv': {
@@ -27,6 +30,9 @@ class BaseTool(metaclass=ABCMeta):
                  std: tuple = None,
                  backend: str = 'opencv',
                  device: str = 'cpu'):
+
+        if not os.path.exists(onnx_model):
+            onnx_model = download_checkpoint(onnx_model)
 
         providers = RTMLIB_SETTINGS[backend][device]
 

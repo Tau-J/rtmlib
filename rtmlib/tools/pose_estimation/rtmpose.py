@@ -71,26 +71,6 @@ class RTMPose(BaseTool):
 
         return resized_img, center, scale
 
-    # def inference(self, img: np.ndarray):
-    #     """Inference RTMPose model.
-
-    #     Args:
-    #         sess (ort.InferenceSession): ONNXRuntime session.
-    #         img (np.ndarray): Input image in shape.
-
-    #     Returns:
-    #         outputs (np.ndarray): Output of RTMPose model.
-    #     """
-    #     # build input
-    #     input = img.transpose(2, 0, 1)[None, :, :, :]
-
-    #     # run model
-    #     outNames = self.session.getUnconnectedOutLayersNames()
-    #     self.session.setInput(input)
-    #     outputs = self.session.forward(outNames)
-
-    #     return outputs
-
     def postprocess(
             self,
             outputs: List[np.ndarray],

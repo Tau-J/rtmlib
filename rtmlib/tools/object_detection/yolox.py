@@ -61,16 +61,6 @@ class YOLOX(BaseTool):
 
         return padded_img, ratio
 
-    # def inference(self, img: np.ndarray):
-    #     img = img.transpose((2, 0, 1))
-    #     img = np.ascontiguousarray(img, dtype=np.float32)
-
-    #     input = img[None, :, :, :]
-    #     outNames = self.session.getUnconnectedOutLayersNames()
-    #     self.session.setInput(input)
-    #     outputs = self.session.forward(outNames)
-    #     return outputs
-
     def postprocess(
         self,
         outputs: List[np.ndarray],

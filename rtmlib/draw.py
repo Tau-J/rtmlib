@@ -52,7 +52,7 @@ def draw_mmpose(img,
     assert len(keypoints.shape) == 2
 
     vis_kpt = [s >= kpt_thr for s in scores]
-    print(scores)
+
     link_dict = {}
     for i, kpt_info in keypoint_info.items():
         kpt_color = tuple(kpt_info['color'])
