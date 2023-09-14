@@ -11,7 +11,7 @@ backend = 'onnxruntime'  # opencv, onnxruntime
 
 cap = cv2.VideoCapture('./demo.jpg')
 
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
+openpose_skeleton = True  # True for openpose-style, False for mmpose-style
 
 wholebody = Wholebody(to_openpose=openpose_skeleton,
                       backend=backend,

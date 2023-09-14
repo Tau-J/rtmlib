@@ -40,8 +40,15 @@ def draw_skeleton(img,
                               skeleton_info, kpt_thr, radius, line_width)
     else:
         for i in range(num_instance):
-            img = draw_openpose(img, keypoints[i], scores[i], keypoint_info,
-                                skeleton_info, kpt_thr, radius, line_width)
+            img = draw_openpose(img,
+                                keypoints[i],
+                                scores[i],
+                                keypoint_info,
+                                skeleton_info,
+                                kpt_thr,
+                                radius * 2,
+                                alpha=0.6,
+                                line_width=line_width * 2)
     return img
 
 
@@ -91,21 +98,15 @@ def draw_openpose(img,
                   keypoint_info,
                   skeleton_info,
                   kpt_thr=0.4,
-                  radius=2,
+                  radius=4,
                   alpha=1.0,
                   line_width=2):
     h, w = img.shape[:2]
-    vis_kpt = [s >= kpt_thr for s in scores]
+
     link_dict = {}
     for i, kpt_info in keypoint_info.items():
         kpt_color = tuple(kpt_info['color'])
         link_dict[kpt_info['name']] = kpt_info['id']
-
-        kpt = keypoints[i]
-
-        if vis_kpt[i]:
-            img = cv2.circle(img, (int(kpt[0]), int(kpt[1])), int(radius),
-                             kpt_color, -1)
 
     for i, ske_info in skeleton_info.items():
         link = ske_info['link']
@@ -143,12 +144,18 @@ def draw_openpose(img,
                            thickness=2)
 
     for j, kpt_info in keypoint_info.items():
-        kpt_color = tuple(kpt_info['color'])
+        kpt_color = tuple(kpt_info['color'][::-1])
+        kpt = keypoints[j]
+
         if scores[j] < kpt_thr or sum(kpt_color) == 0:
             continue
 
         transparency = alpha
-        j_radius = radius // 2 if j > 17 else radius
+        if 24 <= j <= 91:
+            j_radius = 3
+        else:
+            j_radius = 4
+        # j_radius = radius // 2 if j > 17 else radius
 
         img = draw_circles(img,
                            kpt,
