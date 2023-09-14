@@ -16,10 +16,14 @@ def draw_bbox(img, bboxes, color=(0, 255, 0)):
 def draw_skeleton(img,
                   keypoints,
                   scores,
-                  skeleton='coco17',
+                  openpose_skeleton=False,
                   kpt_thr=0.5,
                   radius=2,
                   line_width=2):
+    if openpose_skeleton:
+        skeleton = 'openpose18' if keypoints.shape[1] == 18 else 'openpose134'
+    else:
+        skeleton = 'coco17' if keypoints.shape[1] == 17 else 'coco133'
 
     skeleton_dict = eval(f'{skeleton}')
     keypoint_info = skeleton_dict['keypoint_info']
@@ -86,7 +90,7 @@ def draw_openpose(img,
                   scores,
                   keypoint_info,
                   skeleton_info,
-                  kpt_thr=0.5,
+                  kpt_thr=0.4,
                   radius=2,
                   alpha=1.0,
                   line_width=2):
@@ -134,21 +138,23 @@ def draw_openpose(img,
                                 edge_colors=link_color,
                                 alpha=transparency)
         else:
-            img = cv2.line(img, X, Y, link_color, line_width=2)
+            img = cv2.line(img, (int(X[0]), int(Y[0])), (int(X[1]), int(Y[1])),
+                           link_color,
+                           thickness=2)
 
-        for j, kpt_info in keypoint_info.items():
-            kpt_color = tuple(kpt_info['color'])
-            if scores[j] < kpt_thr or sum(kpt_color) == 0:
-                continue
+    for j, kpt_info in keypoint_info.items():
+        kpt_color = tuple(kpt_info['color'])
+        if scores[j] < kpt_thr or sum(kpt_color) == 0:
+            continue
 
-            transparency = alpha
-            j_radius = radius // 2 if j > 17 else radius
+        transparency = alpha
+        j_radius = radius // 2 if j > 17 else radius
 
-            img = draw_circles(img,
-                               kpt,
-                               radius=np.array([j_radius]),
-                               face_colors=kpt_color,
-                               alpha=transparency)
+        img = draw_circles(img,
+                           kpt,
+                           radius=np.array([j_radius]),
+                           face_colors=kpt_color,
+                           alpha=transparency)
 
     return img
 

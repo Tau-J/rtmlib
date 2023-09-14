@@ -3,7 +3,7 @@ from typing import List, Tuple
 import numpy as np
 
 from ..base import BaseTool
-from .post_processings import convert_coco17_to_openpose18, get_simcc_maximum
+from .post_processings import convert_coco_to_openpose, get_simcc_maximum
 from .pre_processings import bbox_xyxy2cs, top_down_affine
 
 
@@ -38,7 +38,7 @@ class RTMPose(BaseTool):
         scores = np.concatenate(scores, axis=0)
 
         if self.to_openpose:
-            keypoints, scores = convert_coco17_to_openpose18(keypoints, scores)
+            keypoints, scores = convert_coco_to_openpose(keypoints, scores)
 
         return keypoints, scores
 
