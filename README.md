@@ -30,7 +30,7 @@ pip install -e .
 
 - [x] Support MMPose-style skeleton visualization
 - [x] Support OpenPose-style skeleton visualization
-- [ ] Support WholeBody
+- [x] Support WholeBody
 - [x] Support ONNXRuntime backend
 - [ ] Support TensorRT backend
 
