@@ -50,12 +50,11 @@ while cap.isOpened():
     # if you want to use black background instead of original image,
     # img_show = np.zeros(img_show.shape, dtype=np.uint8)
 
-    img_show = draw_skeleton(
-        img_show,
-        keypoints,
-        scores,
-        skeleton='openpose18' if openpose_skeleton else 'coco17',
-        kpt_thr=0.5)
+    img_show = draw_skeleton(img_show,
+                             keypoints,
+                             scores,
+                             openpose_skeleton=openpose_skeleton,
+                             kpt_thr=0.5)
 
     img_show = cv2.resize(img_show, (960, 540))
     cv2.imshow('img', img_show)
