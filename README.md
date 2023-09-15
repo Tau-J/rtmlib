@@ -154,6 +154,7 @@ while cap.isOpened():
   title={rtmlib},
   author={Tao Jiang},
   year={2023},
+  howpublished = {\url{https://github.com/Tau-J/rtmlib}},
 }
 
 @misc{https://doi.org/10.48550/arxiv.2303.07399,
