@@ -35,6 +35,7 @@ pip install -e .
 - [x] Support auto download and cache models
 - [ ] Lightweight models
 - [ ] Support alias to choose model
+- [ ] Support PoseTracker proposed in RTMPose
 - [ ] Support TensorRT backend
 - [ ] Gradio interface
 - [ ] Compatible with Controlnet
@@ -106,8 +107,6 @@ openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 wholebody = Wholebody(to_openpose=openpose_skeleton,
                       backend=backend, device=device)
 
-video_writer = None
-pred_instances_list = []
 frame_idx = 0
 
 while cap.isOpened():
@@ -148,6 +147,30 @@ while cap.isOpened():
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/091b8ce3-32d5-463b-9f41-5c683afa7a11"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/4ffc7be1-50d6-44ff-8c6b-22ea8975aad4"> |
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/6fddfc14-7519-42eb-a7a4-98bf5441f324"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/2523e568-e0c3-4c2e-8e54-d1a67100c537"> |
 
+### Citation
+
+```
+@misc{rtmlib,
+  title={rtmlib},
+  author={Tao Jiang},
+  year={2023},
+}
+
+@misc{https://doi.org/10.48550/arxiv.2303.07399,
+  doi = {10.48550/ARXIV.2303.07399},
+  url = {https://arxiv.org/abs/2303.07399},
+  author = {Jiang, Tao and Lu, Peng and Zhang, Li and Ma, Ningsheng and Han, Rui and Lyu, Chengqi and Li, Yining and Chen, Kai},
+  keywords = {Computer Vision and Pattern Recognition (cs.CV), FOS: Computer and information sciences, FOS: Computer and information sciences},
+  title = {RTMPose: Real-Time Multi-Person Pose Estimation based on MMPose},
+  publisher = {arXiv},
+  year = {2023},
+  copyright = {Creative Commons Attribution 4.0 International}
+}
+```
+
 ## Acknowledgement
 
-Our code is based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)
+Our code is based on these repos:
+- [MMPose](https://github.com/open-mmlab/mmpose)
+- [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose)
+- [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)
