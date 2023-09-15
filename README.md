@@ -32,7 +32,12 @@ pip install -e .
 - [x] Support OpenPose-style skeleton visualization
 - [x] Support WholeBody
 - [x] Support ONNXRuntime backend
+- [x] Support auto download and cache models
+- [ ] Lightweight models
+- [ ] Support alias to choose model
 - [ ] Support TensorRT backend
+- [ ] Gradio interface
+- [ ] Compatible with Controlnet
 
 ## Model Zoo
 
