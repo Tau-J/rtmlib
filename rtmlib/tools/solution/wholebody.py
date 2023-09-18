@@ -39,8 +39,7 @@ class Wholebody:
     def format_result(keypoints_info: np.ndarray) -> List[PoseResult]:
 
         def format_keypoint_part(
-            part: np.ndarray
-        ) -> Optional[List[Optional[Keypoint]]]:
+                part: np.ndarray) -> Optional[List[Optional[Keypoint]]]:
             keypoints = [
                 Keypoint(x, y, score, i) if score >= 0.3 else None
                 for i, (x, y, score) in enumerate(part)
@@ -63,7 +62,7 @@ class Wholebody:
             right_hand = format_keypoint_part(instance[113:134])
             face = format_keypoint_part(instance[24:92])
 
-            # Openpose face consists of 70 points in total, while DWPose only
+            # Openpose face consists of 70 points in total, while RTMPose only
             # provides 68 points. Padding the last 2 points.
             if face is not None:
                 # left eye
