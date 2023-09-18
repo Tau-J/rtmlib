@@ -48,6 +48,8 @@ Here are some models we have converted to onnx format.
 | :-------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: |
 | [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing) | [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |
 
+More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose).
+
 ## Demo
 
 Here is a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
@@ -172,6 +174,7 @@ while cap.isOpened():
 ## Acknowledgement
 
 Our code is based on these repos:
+
 - [MMPose](https://github.com/open-mmlab/mmpose)
 - [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose)
 - [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)
