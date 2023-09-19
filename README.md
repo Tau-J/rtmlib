@@ -37,7 +37,7 @@ pip install -e .
 - [ ] Support alias to choose model
 - [ ] Support PoseTracker proposed in RTMPose
 - [ ] Support TensorRT backend
-- [ ] Gradio interface
+- [x] Gradio interface
 - [ ] Compatible with Controlnet
 
 ## Model Zoo
@@ -52,7 +52,18 @@ More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mm
 
 ## Demo
 
-Here is a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
+Run `webui.py`:
+
+```shell
+# Please make sure you have installed gradio
+# pip install gradio
+
+python webui.py
+```
+
+![image](https://github.com/Tau-J/rtmlib/assets/13503330/eb3913f3-2789-4262-8353-b5e7864aa441)
+
+Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
 
 ```python
 import cv2
@@ -65,21 +76,12 @@ img = cv2.imread('./demo.jpg')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-det_model = YOLOX('./yolox_l.onnx',
-                  model_input_size=(640, 640),
-                  backend=backend,
-                  device=device)
-pose_model = RTMPose('./rtmpose.onnx',
-                     model_input_size=(192, 256),
-                     to_openpose=openpose_skeleton,
-                     backend=backend,
-                     device=device)
+wholebody = Wholebody(to_openpose=openpose_skeleton,
+                      backend=backend, device=device)
 
-bboxes = det_model(img)
-keypoints, scores = pose_model(img, bboxes=bboxes)
+keypoints, scores = wholebody(img, bboxes=bboxes)
 
 # visualize
-img_show = draw_bbox(img.copy(), bboxes)
 
 # if you want to use black background instead of original image,
 # img_show = np.zeros(img_show.shape, dtype=np.uint8)
@@ -89,55 +91,6 @@ img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
 
 cv2.imshow('img', img_show)
 cv2.waitKey()
-```
-
-Here is also a demo to show how to use rtmlib to conduct wholebody pose estimation.
-
-```shell
-import time
-
-import cv2
-from rtmlib import Wholebody, draw_skeleton
-
-device = 'cpu'
-backend = 'onnxruntime'  # opencv, onnxruntime
-
-cap = cv2.VideoCapture('./demo.jpg')
-
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
-
-wholebody = Wholebody(to_openpose=openpose_skeleton,
-                      backend=backend, device=device)
-
-frame_idx = 0
-
-while cap.isOpened():
-    success, frame = cap.read()
-    frame_idx += 1
-
-    if not success:
-        break
-    s = time.time()
-    keypoints, scores = wholebody(frame)
-    det_time = time.time() - s
-    print('det: ', det_time)
-
-    img_show = frame.copy()
-
-    # if you want to use black background instead of original image,
-    # img_show = np.zeros(img_show.shape, dtype=np.uint8)
-
-    img_show = draw_skeleton(
-        img_show,
-        keypoints,
-        scores,
-        openpose_skeleton=openpose_skeleton,
-        kpt_thr=0.43)
-
-    img_show = cv2.resize(img_show, (960, 540))
-    cv2.imshow('img', img_show)
-    cv2.waitKey()
-
 ```
 
 ### Visualization
