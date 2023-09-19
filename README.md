@@ -61,7 +61,7 @@ Run `webui.py`:
 python webui.py
 ```
 
-![image](https://github.com/Tau-J/rtmlib/assets/13503330/d973888d-d741-49ae-8f46-889fa89f28a7)
+![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
 
 Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
 
@@ -79,7 +79,7 @@ openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 wholebody = Wholebody(to_openpose=openpose_skeleton,
                       backend=backend, device=device)
 
-keypoints, scores = wholebody(img, bboxes=bboxes)
+keypoints, scores = wholebody(img)
 
 # visualize
 
