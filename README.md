@@ -61,7 +61,7 @@ Run `webui.py`:
 python webui.py
 ```
 
-![image](https://github.com/Tau-J/rtmlib/assets/13503330/eb3913f3-2789-4262-8353-b5e7864aa441)
+![image](https://github.com/Tau-J/rtmlib/assets/13503330/d973888d-d741-49ae-8f46-889fa89f28a7)
 
 Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
 

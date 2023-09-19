@@ -43,7 +43,7 @@ def predict(img,
                              scores,
                              openpose_skeleton=openpose_skeleton,
                              kpt_thr=0.4)
-    return img_show
+    return img_show[:, :, ::-1]
 
 
 with gr.Blocks() as demo:
