@@ -68,7 +68,7 @@ Here is also a simple demo to show how to use rtmlib to conduct pose estimation 
 ```python
 import cv2
 
-from rtmlib import YOLOX, RTMPose, draw_bbox, draw_skeleton
+from rtmlib import Wholebody, draw_skeleton
 
 device = 'cpu'
 backend = 'onnxruntime'  # opencv, onnxruntime
