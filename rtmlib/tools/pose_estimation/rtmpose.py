@@ -10,7 +10,7 @@ from .pre_processings import bbox_xyxy2cs, top_down_affine
 class RTMPose(BaseTool):
 
     def __init__(self,
-                 onnx_model: str = 'rtmpose-l-384x288',
+                 onnx_model: str,
                  model_input_size: tuple = (288, 384),
                  mean: tuple = (123.675, 116.28, 103.53),
                  std: tuple = (58.395, 57.12, 57.375),

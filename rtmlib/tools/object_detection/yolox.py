@@ -11,7 +11,7 @@ from .post_processings import multiclass_nms
 class YOLOX(BaseTool):
 
     def __init__(self,
-                 onnx_model: str = 'yolox-l-640x640',
+                 onnx_model: str,
                  model_input_size: tuple = (640, 640),
                  nms_thr=0.45,
                  score_thr=0.7,

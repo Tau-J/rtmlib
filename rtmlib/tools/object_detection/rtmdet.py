@@ -10,12 +10,11 @@ from .post_processings import multiclass_nms
 class RTMDet(BaseTool):
 
     def __init__(self,
-                 onnx_model: str = 'rtmdet-m-640x640',
+                 onnx_model: str,
                  model_input_size: tuple = (640, 640),
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, backend, device)
-        raise NotImplementedError
 
     def __call__(self, image: np.ndarray):
         image, ratio = self.preprocess(image)
