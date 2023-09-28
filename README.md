@@ -46,12 +46,6 @@ By defaults, rtmlib will automatically download and apply models with the best p
 
 More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose).
 
-Here are some onnx models converted:
-
-|                                              Det                                              |                                                    Pose                                                     |
-| :-------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------: |
-|  | [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |
-
 ### Detectors
 
 <details open>
