@@ -8,17 +8,50 @@ from .types import BodyResult, Keypoint, PoseResult
 
 class Wholebody:
 
-    def __init__(
-            self,
-            det:
-        str = 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
-            det_input_size: tuple = (640, 640),
-            pose:
-        str = 'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip',  # noqa
-            pose_input_size: tuple = (288, 384),
-            to_openpose: bool = False,
-            backend: str = 'opencv',
-            device: str = 'cpu'):
+    MODE = {
+        'performance': {
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
+            'det_input_size': (640, 640),
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip',  # noqa
+            'pose_input_size': (288, 384),
+        },
+        'lightweight': {
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip',  # noqa
+            'det_input_size': (416, 416),
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-256x192-fbef0d61_20230925.zip',  # noqa
+            'pose_input_size': (192, 256),
+        },
+        'balanced': {
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
+            'det_input_size': (640, 640),
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-256x192-fbef0d61_20230925.zip',  # noqa
+            'pose_input_size': (192, 256),
+        }
+    }
+
+    def __init__(self,
+                 det: str = None,
+                 det_input_size: tuple = (640, 640),
+                 pose: str = None,
+                 pose_input_size: tuple = (288, 384),
+                 mode: str = 'performance',
+                 to_openpose: bool = False,
+                 backend: str = 'opencv',
+                 device: str = 'cpu'):
+
+        if det is None:
+            det = self.MODE[mode]['det']
+            det_input_size = self.MODE[mode]['det_input_size']
+
+        if pose is None:
+            pose = self.MODE[mode]['pose']
+            pose_input_size = self.MODE[mode]['pose_input_size']
 
         self.det_model = YOLOX(det,
                                model_input_size=det_input_size,

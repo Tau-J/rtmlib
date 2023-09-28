@@ -34,6 +34,64 @@ pip install -e .
 # pip install onnxruntime-gpu
 ```
 
+## Quick Start
+
+Run `webui.py`:
+
+```shell
+# Please make sure you have installed gradio
+# pip install gradio
+
+python webui.py
+```
+
+![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
+
+Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
+
+```python
+import cv2
+
+from rtmlib import Wholebody, draw_skeleton
+
+device = 'cpu'
+backend = 'onnxruntime'  # opencv, onnxruntime
+img = cv2.imread('./demo.jpg')
+
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
+
+wholebody = Wholebody(to_openpose=openpose_skeleton,
+                      backend=backend, device=device)
+
+keypoints, scores = wholebody(img)
+
+# visualize
+
+# if you want to use black background instead of original image,
+# img_show = np.zeros(img_show.shape, dtype=np.uint8)
+
+img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
+
+
+cv2.imshow('img', img_show)
+cv2.waitKey()
+```
+
+## APIs
+
+- Solutions (High-level APIs)
+  - [Wholebody](/rtmlib/tools/solution/wholebody.py)
+  - [Body](/rtmlib/tools/solution/body.py)
+- Models (Low-level APIs)
+  - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
+  - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
+  - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
+    - RTMPose for 17 keypoints
+    - RTMW for 133 keypoints
+- Visualization
+  - [draw_bbox](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L9)
+  - [draw_skeleton](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L16)
+
 ## TODO
 
 - [x] Support MMPose-style skeleton visualization
@@ -42,6 +100,7 @@ pip install -e .
 - [x] Support ONNXRuntime backend
 - [x] Support auto download and cache models
 - [x] Lightweight models
+- [x] Support 3 modes: `performance`, `lightweight`, `balanced` to select
 - [ ] Support alias to choose model
 - [ ] Support PoseTracker proposed in RTMPose
 - [ ] Support TensorRT backend
@@ -99,49 +158,6 @@ Notes:
 | [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip) |  384x288   | Wholebody 133 Keypoints |
 
 </details>
-
-## Demo
-
-Run `webui.py`:
-
-```shell
-# Please make sure you have installed gradio
-# pip install gradio
-
-python webui.py
-```
-
-![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
-
-Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
-
-```python
-import cv2
-
-from rtmlib import Wholebody, draw_skeleton
-
-device = 'cpu'
-backend = 'onnxruntime'  # opencv, onnxruntime
-img = cv2.imread('./demo.jpg')
-
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
-
-wholebody = Wholebody(to_openpose=openpose_skeleton,
-                      backend=backend, device=device)
-
-keypoints, scores = wholebody(img)
-
-# visualize
-
-# if you want to use black background instead of original image,
-# img_show = np.zeros(img_show.shape, dtype=np.uint8)
-
-img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
-
-
-cv2.imshow('img', img_show)
-cv2.waitKey()
-```
 
 ### Visualization
 
