@@ -12,6 +12,14 @@ Optionally, you can use other common backends like pytorch, onnxruntime, tensorr
 
 ## Installation
 
+- install from pypi:
+
+```shell
+pip install rtmlib -i https://pypi.org/simple
+```
+
+- install from source code:
+
 ```shell
 git clone https://github.com/Tau-J/rtmlib.git
 cd rtmlib
@@ -42,7 +50,7 @@ pip install -e .
 
 ## Model Zoo
 
-By defaults, rtmlib will automatically download and apply models with the best performace. But you can also specify the model you want to use by passing the `onnx_model` argument.
+By defaults, rtmlib will automatically download and apply models with the best performance. But you can also specify the model you want to use by passing the `onnx_model` argument.
 
 More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose).
 
@@ -52,18 +60,19 @@ More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mm
 <summary><b>Person</b></summary>
 
 Notes:
+
 - Models trained on HumanArt can detect both real human and cartoon characters.
 - Models trained on COCO can only detect real human.
 
-| ONNX Model | Input Size | Description |
-| :--------: | :--------: | :--------: |
-| [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing) | 640x640 | trained on COCO val2017 |
-| [YOLOX-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_nano_8xb8-300e_humanart-40f6f0d0.zip) | 416x416 | trained on HumanArt |
-| [YOLOX-tiny](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip) | 416x416 | trained on HumanArt |
-| [YOLOX-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip) | 640x640 | trained on HumanArt |
-| [YOLOX-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip) | 640x640 | trained on HumanArt |
-| [YOLOX-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_l_8xb8-300e_humanart-ce1d7a62.zip) | 640x640 | trained on HumanArt |
-| [YOLOX-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip) | 640x640 | trained on HumanArt |
+|                                                          ONNX Model                                                           | Input Size |       Description       |
+| :---------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------------------: |
+|                 [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing)                 |  640x640   | trained on COCO val2017 |
+| [YOLOX-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_nano_8xb8-300e_humanart-40f6f0d0.zip) |  416x416   |   trained on HumanArt   |
+| [YOLOX-tiny](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip) |  416x416   |   trained on HumanArt   |
+|    [YOLOX-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip)    |  640x640   |   trained on HumanArt   |
+|    [YOLOX-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip)    |  640x640   |   trained on HumanArt   |
+|    [YOLOX-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_l_8xb8-300e_humanart-ce1d7a62.zip)    |  640x640   |   trained on HumanArt   |
+|    [YOLOX-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip)    |  640x640   |   trained on HumanArt   |
 
 </details>
 
@@ -72,22 +81,22 @@ Notes:
 <details open>
 <summary><b>Body</b></summary>
 
-| ONNX Model | Input Size | Description |
-| :--------: | :--------: | :--------: |
-| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.zip) | 256x192 | Body 17 Keypoints |
-| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.zip) | 256x192 | Body 17 Keypoints |
-| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) | 256x192 | Body 17 Keypoints |
-| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-384x288-3f5a1437_20230504.zip) | 384x288 | Body 17 Keypoints |
-| [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip) | 384x288 | Body 17 Keypoints |
+|                                                                     ONNX Model                                                                      | Input Size |    Description    |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------------: |
+| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.zip) |  256x192   | Body 17 Keypoints |
+| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.zip) |  256x192   | Body 17 Keypoints |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |  256x192   | Body 17 Keypoints |
+| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-384x288-3f5a1437_20230504.zip) |  384x288   | Body 17 Keypoints |
+| [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip) |  384x288   | Body 17 Keypoints |
 
 </details>
 
 <details open>
 <summary><b>WholeBody</b></summary>
 
-| ONNX Model | Input Size | Description |
-| :--------: | :--------: | :--------: |
-| [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip) | 384x288 | Wholebody 133 Keypoints |
+|                                                                  ONNX Model                                                                   | Input Size |       Description       |
+| :-------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------------------: |
+| [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip) |  384x288   | Wholebody 133 Keypoints |
 
 </details>
 
@@ -148,7 +157,7 @@ cv2.waitKey()
 ```
 @misc{rtmlib,
   title={rtmlib},
-  author={Tao Jiang},
+  author={Jiang, Tao},
   year={2023},
   howpublished = {\url{https://github.com/Tau-J/rtmlib}},
 }
