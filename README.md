@@ -7,6 +7,7 @@ Basically, rtmlib only requires these dependencies:
 - numpy
 - opencv-python
 - opencv-contrib-python
+- onnxruntime
 
 Optionally, you can use other common backends like opencv, onnxruntime, tensorrt to accelerate the inference process.
 
@@ -29,8 +30,6 @@ pip install -r requirements.txt
 pip install -e .
 
 # [optional]
-# pip install onnxruntime
-# or
 # pip install onnxruntime-gpu
 ```
 
@@ -54,7 +53,7 @@ import cv2
 
 from rtmlib import Wholebody, draw_skeleton
 
-device = 'cpu'
+device = 'cpu'  # cpu, cuda
 backend = 'onnxruntime'  # opencv, onnxruntime
 img = cv2.imread('./demo.jpg')
 

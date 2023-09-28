@@ -12,7 +12,7 @@ class RTMDet(BaseTool):
     def __init__(self,
                  onnx_model: str = 'rtmdet-m-640x640',
                  model_input_size: tuple = (640, 640),
-                 backend: str = 'opencv',
+                 backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, backend, device)
         raise NotImplementedError
@@ -105,7 +105,7 @@ class RTMDet(BaseTool):
 
         elif outputs.shape[-1] == 5:
             # onnx contains nms module
- 
+
             pack_dets = (outputs[0, :, :4], outputs[0, :, 4])
             final_boxes, final_scores = pack_dets
             final_boxes /= ratio

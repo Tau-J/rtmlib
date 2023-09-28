@@ -15,7 +15,7 @@ class RTMPose(BaseTool):
                  mean: tuple = (123.675, 116.28, 103.53),
                  std: tuple = (58.395, 57.12, 57.375),
                  to_openpose: bool = False,
-                 backend: str = 'opencv',
+                 backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, mean, std, backend,
                          device)

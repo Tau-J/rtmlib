@@ -3,7 +3,8 @@ import numpy as np
 from .. import YOLOX, RTMPose
 
 
-class Body:
+class PoseTracker:
+
     MODE = {
         'performance': {
             'det':
@@ -38,7 +39,7 @@ class Body:
                  pose_input_size: tuple = (288, 384),
                  mode: str = 'performance',
                  to_openpose: bool = False,
-                 backend: str = 'onnxruntime',
+                 backend: str = 'opencv',
                  device: str = 'cpu'):
 
         if det is None:

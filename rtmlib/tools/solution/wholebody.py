@@ -42,7 +42,7 @@ class Wholebody:
                  pose_input_size: tuple = (288, 384),
                  mode: str = 'performance',
                  to_openpose: bool = False,
-                 backend: str = 'opencv',
+                 backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
         if det is None:

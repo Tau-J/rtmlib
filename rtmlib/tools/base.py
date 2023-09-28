@@ -37,9 +37,17 @@ class BaseTool(metaclass=ABCMeta):
         providers = RTMLIB_SETTINGS[backend][device]
 
         if backend == 'opencv':
-            session = cv2.dnn.readNetFromONNX(onnx_model)
-            session.setPreferableBackend(providers[0])
-            session.setPreferableTarget(providers[1])
+            try:
+                session = cv2.dnn.readNetFromONNX(onnx_model)
+                session.setPreferableBackend(providers[0])
+                session.setPreferableTarget(providers[1])
+            except Exception:
+                raise RuntimeError(
+                    'This model is not supported by OpenCV'
+                    ' backend, please use `pip install'
+                    ' onnxruntime` or `pip install'
+                    ' onnxruntime-gpu` to install onnxruntime'
+                    ' backend. Then specify `backend=onnxruntime`.')  # noqa
 
         elif backend == 'onnxruntime':
             import onnxruntime as ort
