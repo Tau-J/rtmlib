@@ -8,7 +8,7 @@ Basically, rtmlib only requires these dependencies:
 - opencv-python
 - opencv-contrib-python
 
-Optionally, you can use other common backends like pytorch, onnxruntime, tensorrt to accelerate the inference process.
+Optionally, you can use other common backends like opencv, onnxruntime, tensorrt to accelerate the inference process.
 
 ## Installation
 
@@ -61,6 +61,7 @@ img = cv2.imread('./demo.jpg')
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 wholebody = Wholebody(to_openpose=openpose_skeleton,
+                      mode='performance',  # 'performance', 'lightweight', 'balanced'. Default: 'performance'
                       backend=backend, device=device)
 
 keypoints, scores = wholebody(img)
