@@ -14,12 +14,12 @@ cap = cv2.VideoCapture('./demo.jpg')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-det_model = YOLOX('./yolox_l.onnx',
+det_model = YOLOX('https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
                   model_input_size=(640, 640),
                   backend=backend,
                   device=device)
-pose_model = RTMPose('./rtmpose.onnx',
-                     model_input_size=(192, 256),
+pose_model = RTMPose('https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip',  # noqa
+                     model_input_size=(288, 384),
                      to_openpose=openpose_skeleton,
                      backend=backend,
                      device=device)
@@ -58,4 +58,4 @@ while cap.isOpened():
 
     img_show = cv2.resize(img_show, (960, 540))
     cv2.imshow('img', img_show)
-    cv2.waitKey(10)
+    cv2.waitKey()

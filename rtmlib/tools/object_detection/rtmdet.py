@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from ..base import BaseTool
+from .post_processings import multiclass_nms
 
 
 class RTMDet(BaseTool):
@@ -19,9 +20,8 @@ class RTMDet(BaseTool):
     def __call__(self, image: np.ndarray):
         image, ratio = self.preprocess(image)
         outputs = self.inference(image)
-        # results = self.postprocess(outputs, center, scale)
-
-        return outputs
+        results = self.postprocess(outputs, ratio)
+        return results
 
     def preprocess(self, img: np.ndarray):
         """Do preprocessing for RTMPose model inference.
@@ -54,21 +54,63 @@ class RTMDet(BaseTool):
 
         return padded_img, ratio
 
-    # def inference(self, img: np.ndarray):
-    #     img = img.transpose((2, 0, 1))
-    #     img = np.ascontiguousarray(img, dtype=np.float32)
-
-    #     input = [img]
-    #     outNames = self.session.getUnconnectedOutLayersNames()
-    #     self.session.setInput(input)
-    #     outputs = self.session.forward(outNames)
-    #     return outputs
-
     def postprocess(
-            self,
-            outputs: List[np.ndarray],
-            model_input_size: Tuple[int, int],
-            center: Tuple[int, int],
-            scale: Tuple[int, int],
-            simcc_split_ratio: float = 2.0) -> Tuple[np.ndarray, np.ndarray]:
-        pass
+        self,
+        outputs: List[np.ndarray],
+        ratio: float = 1.,
+    ) -> Tuple[np.ndarray, np.ndarray]:
+        if outputs.shape[-1] == 4:
+            # onnx without nms module
+
+            grids = []
+            expanded_strides = []
+            strides = [8, 16, 32]
+
+            hsizes = [self.model_input_size[0] // stride for stride in strides]
+            wsizes = [self.model_input_size[1] // stride for stride in strides]
+
+            for hsize, wsize, stride in zip(hsizes, wsizes, strides):
+                xv, yv = np.meshgrid(np.arange(wsize), np.arange(hsize))
+                grid = np.stack((xv, yv), 2).reshape(1, -1, 2)
+                grids.append(grid)
+                shape = grid.shape[:2]
+                expanded_strides.append(np.full((*shape, 1), stride))
+
+            grids = np.concatenate(grids, 1)
+            expanded_strides = np.concatenate(expanded_strides, 1)
+            outputs[..., :2] = (outputs[..., :2] + grids) * expanded_strides
+            outputs[..., 2:4] = np.exp(outputs[..., 2:4]) * expanded_strides
+
+            predictions = outputs[0]
+            boxes = predictions[:, :4]
+            scores = predictions[:, 4:5] * predictions[:, 5:]
+
+            boxes_xyxy = np.ones_like(boxes)
+            boxes_xyxy[:, 0] = boxes[:, 0] - boxes[:, 2] / 2.
+            boxes_xyxy[:, 1] = boxes[:, 1] - boxes[:, 3] / 2.
+            boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2] / 2.
+            boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.
+            boxes_xyxy /= ratio
+            dets = multiclass_nms(boxes_xyxy,
+                                  scores,
+                                  nms_thr=self.nms_thr,
+                                  score_thr=self.score_thr)
+            if dets is not None:
+                pack_dets = (dets[:, :4], dets[:, 4], dets[:, 5])
+                final_boxes, final_scores, final_cls_inds = pack_dets
+                isscore = final_scores > 0.3
+                iscat = final_cls_inds == 0
+                isbbox = [i and j for (i, j) in zip(isscore, iscat)]
+                final_boxes = final_boxes[isbbox]
+
+        elif outputs.shape[-1] == 5:
+            # onnx contains nms module
+ 
+            pack_dets = (outputs[0, :, :4], outputs[0, :, 4])
+            final_boxes, final_scores = pack_dets
+            final_boxes /= ratio
+            isscore = final_scores > 0.3
+            isbbox = [i for i in isscore]
+            final_boxes = final_boxes[isbbox]
+
+        return final_boxes

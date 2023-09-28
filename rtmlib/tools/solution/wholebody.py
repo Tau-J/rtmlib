@@ -10,10 +10,11 @@ class Wholebody:
 
     def __init__(
             self,
-            det: str = './yolox_l.onnx',
+            det:
+        str = 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
             det_input_size: tuple = (640, 640),
             pose:
-        str = 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-384x288-2438fd99_20230728.zip',  # noqa
+        str = 'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip',  # noqa
             pose_input_size: tuple = (288, 384),
             to_openpose: bool = False,
             backend: str = 'opencv',
