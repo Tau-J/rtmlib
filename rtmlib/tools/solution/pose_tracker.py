@@ -95,6 +95,7 @@ class PoseTracker:
         self.reset()
 
     def reset(self):
+        """Reset pose tracker."""
         self.cnt = 0
         self.instance_list = []
 

@@ -58,6 +58,18 @@ class RTMDet(BaseTool):
         outputs: List[np.ndarray],
         ratio: float = 1.,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """Do postprocessing for RTMPose model inference.
+
+        Args:
+            outputs (List[np.ndarray]): Outputs of RTMPose model.
+            ratio (float): Ratio of preprocessing.
+
+        Returns:
+            tuple:
+            - final_boxes (np.ndarray): Final bounding boxes.
+            - final_scores (np.ndarray): Final scores.
+        """
+
         if outputs.shape[-1] == 4:
             # onnx without nms module
 
