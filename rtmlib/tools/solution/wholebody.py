@@ -3,7 +3,7 @@ from typing import List, Optional
 import numpy as np
 
 from .. import YOLOX, RTMPose
-from .types import BodyResult, Keypoint, PoseResult
+from .utils.types import BodyResult, Keypoint, PoseResult
 
 
 class Wholebody:

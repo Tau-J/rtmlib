@@ -6,10 +6,10 @@ from rtmlib import Wholebody, draw_skeleton
 
 # import numpy as np
 
-device = 'cpu'
+device = 'cuda'
 backend = 'onnxruntime'  # opencv, onnxruntime
 
-cap = cv2.VideoCapture('./demo.jpg')
+cap = cv2.VideoCapture('./demo.mp4')
 
 openpose_skeleton = True  # True for openpose-style, False for mmpose-style
 
@@ -17,8 +17,6 @@ wholebody = Wholebody(to_openpose=openpose_skeleton,
                       backend=backend,
                       device=device)
 
-video_writer = None
-pred_instances_list = []
 frame_idx = 0
 
 while cap.isOpened():
@@ -45,4 +43,4 @@ while cap.isOpened():
 
     img_show = cv2.resize(img_show, (960, 540))
     cv2.imshow('img', img_show)
-    cv2.waitKey()
+    cv2.waitKey(10)

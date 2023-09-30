@@ -1,5 +1,7 @@
 # rtmlib
 
+![demo](https://github.com/Tau-J/rtmlib/assets/13503330/b7e8ce8b-3134-43cf-bba6-d81656897289)
+
 rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
 
 Basically, rtmlib only requires these dependencies:
@@ -82,6 +84,7 @@ cv2.waitKey()
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
   - [Body](/rtmlib/tools/solution/body.py)
+  - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)

@@ -1,3 +1,44 @@
+'''
+Example:
+
+import cv2
+from rtmlib import PoseTracker, Wholebody, draw_skeleton
+
+device = 'cuda'
+backend = 'onnxruntime'  # opencv, onnxruntime
+
+openpose_skeleton = True  # True for openpose-style, False for mmpose-style
+
+cap = cv2.VideoCapture('./demo.mp4')
+
+wholebody = PoseTracker(Wholebody,
+                        det_frequency=10,  # detect every 10 frames
+                        to_openpose=openpose_skeleton,
+                        backend=backend, device=device)
+
+                        frame_idx = 0
+
+while cap.isOpened():
+    success, frame = cap.read()
+    frame_idx += 1
+
+    if not success:
+        break
+
+    keypoints, scores = wholebody(frame)
+
+    img_show = frame.copy()
+
+    img_show = draw_skeleton(img_show,
+                             keypoints,
+                             scores,
+                             openpose_skeleton=openpose_skeleton,
+                             kpt_thr=0.43)
+
+    img_show = cv2.resize(img_show, (960, 540))
+    cv2.imshow('img', img_show)
+    cv2.waitKey(10)
+'''
 import numpy as np
 
 
@@ -23,6 +64,16 @@ def pose_to_bbox(keypoints: np.ndarray, expansion: float = 1.25) -> np.ndarray:
 
 
 class PoseTracker:
+    """Pose tracker for wholebody pose estimation.
+
+    Args:
+        solution (type): rtmlib solutions, e.g. Wholebody, Body, etc.
+        det_frequency (int): Frequency of object detection.
+        mode (str): 'performance', 'lightweight', or 'balanced'.
+        to_openpose (bool): Whether to use openpose-style skeleton.
+        backend (str): Backend of pose estimation model.
+        device (str): Device of pose estimation model.
+    """
 
     def __init__(self,
                  solution: type,
