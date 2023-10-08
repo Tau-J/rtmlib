@@ -11,7 +11,9 @@ Basically, rtmlib only requires these dependencies:
 - opencv-contrib-python
 - onnxruntime
 
-Optionally, you can use other common backends like opencv, onnxruntime, tensorrt to accelerate the inference process.
+Optionally, you can use other common backends like opencv, onnxruntime, openvino, tensorrt to accelerate the inference process.
+
+- For openvino users, please add the path `<your python path>\envs\<your env name>\Lib\site-packages\openvino\libs` into your environment path.
 
 ## Installation
 
@@ -34,6 +36,7 @@ pip install -e .
 # [optional]
 # pip install onnxruntime-gpu
 # pip install openvino
+
 ```
 
 ## Quick Start
