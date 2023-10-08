@@ -2,20 +2,23 @@ import time
 
 import cv2
 
-from rtmlib import Wholebody, draw_skeleton
+from rtmlib import PoseTracker, Wholebody, draw_skeleton
 
 # import numpy as np
 
-device = 'cuda'
-backend = 'onnxruntime'  # opencv, onnxruntime
+device = 'cpu'
+backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 
 cap = cv2.VideoCapture('./demo.mp4')
 
-openpose_skeleton = True  # True for openpose-style, False for mmpose-style
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-wholebody = Wholebody(to_openpose=openpose_skeleton,
-                      backend=backend,
-                      device=device)
+wholebody = PoseTracker(Wholebody,
+                        det_frequency=10,
+                        to_openpose=openpose_skeleton,
+                        mode='performance',
+                        backend=backend,
+                        device=device)
 
 frame_idx = 0
 

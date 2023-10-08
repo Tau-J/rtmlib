@@ -34,13 +34,14 @@ class BaseTool(metaclass=ABCMeta):
         if not os.path.exists(onnx_model):
             onnx_model = download_checkpoint(onnx_model)
 
-        providers = RTMLIB_SETTINGS[backend][device]
-
         if backend == 'opencv':
             try:
+                providers = RTMLIB_SETTINGS[backend][device]
+
                 session = cv2.dnn.readNetFromONNX(onnx_model)
                 session.setPreferableBackend(providers[0])
                 session.setPreferableTarget(providers[1])
+                self.session = session
             except Exception:
                 raise RuntimeError(
                     'This model is not supported by OpenCV'
@@ -51,15 +52,33 @@ class BaseTool(metaclass=ABCMeta):
 
         elif backend == 'onnxruntime':
             import onnxruntime as ort
-            session = ort.InferenceSession(path_or_bytes=onnx_model,
-                                           providers=[providers])
+            providers = RTMLIB_SETTINGS[backend][device]
+
+            self.session = ort.InferenceSession(path_or_bytes=onnx_model,
+                                                providers=[providers])
+
+        elif backend == 'openvino':
+            from openvino.runtime import Core
+            core = Core()
+            model_onnx = core.read_model(model=onnx_model)
+
+            if device != 'cpu':
+                print('OpenVINO only supports CPU backend, automatically'
+                      ' switched to CPU backend.')
+
+            self.compiled_model = core.compile_model(
+                model=model_onnx,
+                device_name='CPU',
+                config={'PERFORMANCE_HINT': 'LATENCY'})
+            self.input_layer = self.compiled_model.input(0)
+            self.output_layer0 = self.compiled_model.output(0)
+            self.output_layer1 = self.compiled_model.output(1)
 
         else:
             raise NotImplementedError
 
         print(f'load {onnx_model} with {backend} backend')
 
-        self.session = session
         self.onnx_model = onnx_model
         self.model_input_size = model_input_size
         self.mean = mean
@@ -81,7 +100,7 @@ class BaseTool(metaclass=ABCMeta):
         Returns:
             outputs (np.ndarray): Output of RTMPose model.
         """
-        # build input
+        # build input to (1, 3, H, W)
         img = img.transpose(2, 0, 1)
         img = np.ascontiguousarray(img, dtype=np.float32)
         input = img[None, :, :, :]
@@ -98,5 +117,13 @@ class BaseTool(metaclass=ABCMeta):
                 sess_output.append(out.name)
 
             outputs = self.session.run(sess_output, sess_input)
+        elif self.backend == 'openvino':
+            results = self.compiled_model(input)
+            output0 = results[self.output_layer0]
+            output1 = results[self.output_layer1]
+            if output0.ndim == output1.ndim:
+                outputs = [output0, output1]
+            else:
+                outputs = [output0]
 
         return outputs

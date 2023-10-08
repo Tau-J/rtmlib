@@ -33,6 +33,7 @@ pip install -e .
 
 # [optional]
 # pip install onnxruntime-gpu
+# pip install openvino
 ```
 
 ## Quick Start
@@ -56,7 +57,7 @@ import cv2
 from rtmlib import Wholebody, draw_skeleton
 
 device = 'cpu'  # cpu, cuda
-backend = 'onnxruntime'  # opencv, onnxruntime
+backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 img = cv2.imread('./demo.jpg')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
@@ -105,7 +106,8 @@ cv2.waitKey()
 - [x] Lightweight models
 - [x] Support 3 modes: `performance`, `lightweight`, `balanced` to select
 - [ ] Support alias to choose model
-- [ ] Support PoseTracker proposed in RTMPose
+- [x] Support naive PoseTracker
+- [x] Support OpenVINO backend
 - [ ] Support TensorRT backend
 - [x] Gradio interface
 - [x] Compatible with Controlnet
