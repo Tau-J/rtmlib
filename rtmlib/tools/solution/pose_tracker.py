@@ -78,7 +78,7 @@ class PoseTracker:
     def __init__(self,
                  solution: type,
                  det_frequency: int = 1,
-                 mode: str = 'performance',
+                 mode: str = 'balanced',
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):

@@ -13,12 +13,13 @@ cap = cv2.VideoCapture('./demo.mp4')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-wholebody = PoseTracker(Wholebody,
-                        det_frequency=10,
-                        to_openpose=openpose_skeleton,
-                        mode='performance',
-                        backend=backend,
-                        device=device)
+wholebody = PoseTracker(
+    Wholebody,
+    det_frequency=10,
+    to_openpose=openpose_skeleton,
+    mode='balanced',  # balanced, performance, lightweight
+    backend=backend,
+    device=device)
 
 frame_idx = 0
 

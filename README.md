@@ -66,7 +66,7 @@ img = cv2.imread('./demo.jpg')
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 wholebody = Wholebody(to_openpose=openpose_skeleton,
-                      mode='performance',  # 'performance', 'lightweight', 'balanced'. Default: 'performance'
+                      mode='balanced',  # 'performance', 'lightweight', 'balanced'. Default: 'balanced'
                       backend=backend, device=device)
 
 keypoints, scores = wholebody(img)

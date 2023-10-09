@@ -78,7 +78,7 @@ class Body:
                  det_input_size: tuple = (640, 640),
                  pose: str = None,
                  pose_input_size: tuple = (288, 384),
-                 mode: str = 'performance',
+                 mode: str = 'balanced',
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
