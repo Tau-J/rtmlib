@@ -60,10 +60,10 @@ with gr.Blocks() as demo:
                                  label='Keypoint Type',
                                  info='Body / Wholebody',
                                  value='body')
-        backend = gr.Dropdown(['opencv', 'onnxruntime'],
+        backend = gr.Dropdown(['opencv', 'onnxruntime', 'openvino'],
                               label='Choose backend',
-                              info='opencv / onnxruntime',
-                              value='opencv')
+                              info='opencv / onnxruntime / openvino',
+                              value='onnxruntime')
         device = gr.Dropdown(['cpu', 'cuda'],
                              label='Choose device',
                              info='cpu / cuda',

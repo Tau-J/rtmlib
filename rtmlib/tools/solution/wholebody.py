@@ -61,7 +61,7 @@ class Wholebody:
         },
         'lightweight': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip',  # noqa
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip',  # noqa
             'det_input_size': (416, 416),
             'pose':
             'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-256x192-fbef0d61_20230925.zip',  # noqa
