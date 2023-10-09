@@ -163,6 +163,7 @@ Notes:
 
 |                                                                  ONNX Model                                                                   | Input Size |       Description       |
 | :-------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------------------: |
+| [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-256x192-fbef0d61_20230925.zip) |  256x192   | Wholebody 133 Keypoints |
 | [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip) |  384x288   | Wholebody 133 Keypoints |
 
 </details>
