@@ -3,7 +3,7 @@ import math
 import cv2
 import numpy as np
 
-from .visualization.skeleton import *  # noqa
+from .skeleton import *  # noqa
 
 
 def draw_bbox(img, bboxes, color=(0, 255, 0)):
@@ -20,10 +20,23 @@ def draw_skeleton(img,
                   kpt_thr=0.5,
                   radius=2,
                   line_width=2):
+    num_keypoints = keypoints.shape[1]
     if openpose_skeleton:
-        skeleton = 'openpose18' if keypoints.shape[1] == 18 else 'openpose134'
+        if num_keypoints == 18:
+            skeleton = 'openpose18'
+        elif num_keypoints == 134:
+            skeleton = 'openpose134'
+        else:
+            raise NotImplementedError
     else:
-        skeleton = 'coco17' if keypoints.shape[1] == 17 else 'coco133'
+        if num_keypoints == 17:
+            skeleton = 'coco17'
+        elif num_keypoints == 133:
+            skeleton = 'coco133'
+        elif num_keypoints == 21:
+            skeleton = 'hand21'
+        else:
+            raise NotImplementedError
 
     skeleton_dict = eval(f'{skeleton}')
     keypoint_info = skeleton_dict['keypoint_info']
@@ -34,11 +47,11 @@ def draw_skeleton(img,
         scores = scores[None, :, :]
 
     num_instance = keypoints.shape[0]
-    if skeleton.startswith('coco'):
+    if skeleton in ['coco17', 'coco133', 'hand21']:
         for i in range(num_instance):
             img = draw_mmpose(img, keypoints[i], scores[i], keypoint_info,
                               skeleton_info, kpt_thr, radius, line_width)
-    else:
+    elif skeleton in ['coco18', 'coco134']:
         for i in range(num_instance):
             img = draw_openpose(img,
                                 keypoints[i],
@@ -49,6 +62,8 @@ def draw_skeleton(img,
                                 radius * 2,
                                 alpha=0.6,
                                 line_width=line_width * 2)
+    else:
+        raise NotImplementedError
     return img
 
 

@@ -48,13 +48,6 @@ def get_simcc_maximum(simcc_x: np.ndarray,
     return locs, vals
 
 
-# def convert_coco_to_openpose(keypoints, scores):
-#     if keypoints.shape[1] == 17:
-#         return convert_coco17_to_openpose18(keypoints, scores)
-#     elif keypoints.shape[1] == 133:
-#         return convert_coco133_to_openpose134(keypoints, scores)
-
-
 def convert_coco_to_openpose(keypoints, scores):
     keypoints_info = np.concatenate((keypoints, scores[..., None]), axis=-1)
 

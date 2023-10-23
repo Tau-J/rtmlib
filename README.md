@@ -104,6 +104,9 @@ cv2.waitKey()
 - [x] Support MMPose-style skeleton visualization
 - [x] Support OpenPose-style skeleton visualization
 - [x] Support WholeBody
+- [x] Support Hand
+- [ ] Support Face
+- [ ] Support Animal
 - [x] Support ONNXRuntime backend
 - [x] Support auto download and cache models
 - [x] Lightweight models

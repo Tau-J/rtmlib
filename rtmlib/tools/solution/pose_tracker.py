@@ -82,7 +82,7 @@ class PoseTracker:
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
-
+        print('pose tracker', backend, device)
         model = solution(mode=mode,
                          to_openpose=to_openpose,
                          backend=backend,

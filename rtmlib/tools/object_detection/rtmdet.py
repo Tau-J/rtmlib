@@ -14,11 +14,15 @@ class RTMDet(BaseTool):
                  model_input_size: tuple = (640, 640),
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
-        super().__init__(onnx_model, model_input_size, backend, device)
+        super().__init__(onnx_model,
+                         model_input_size,
+                         backend=backend,
+                         device=device)
 
     def __call__(self, image: np.ndarray):
         image, ratio = self.preprocess(image)
-        outputs = self.inference(image)
+        outputs = self.inference(image)[0]
+        # print(len(outputs))
         results = self.postprocess(outputs, ratio)
         return results
 
