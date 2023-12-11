@@ -36,9 +36,9 @@ def get_simcc_maximum(simcc_x: np.ndarray,
     max_val_y = np.amax(simcc_y, axis=1)
 
     # get maximum value across x and y axis
-    mask = max_val_x > max_val_y
-    max_val_x[mask] = max_val_y[mask]
-    vals = max_val_x
+    # mask = max_val_x > max_val_y
+    # max_val_x[mask] = max_val_y[mask]
+    vals = 0.5 * (max_val_x + max_val_y)
     locs[vals <= 0.] = -1
 
     # reshape

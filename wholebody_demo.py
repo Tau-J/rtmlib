@@ -9,15 +9,15 @@ from rtmlib import PoseTracker, Wholebody, draw_skeleton
 device = 'cpu'
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 
-cap = cv2.VideoCapture('./demo.mp4')
+cap = cv2.VideoCapture(0)
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 wholebody = PoseTracker(
     Wholebody,
-    det_frequency=10,
+    det_frequency=100,
     to_openpose=openpose_skeleton,
-    mode='balanced',  # balanced, performance, lightweight
+    mode='performance',  # balanced, performance, lightweight
     backend=backend,
     device=device)
 
@@ -38,12 +38,12 @@ while cap.isOpened():
 
     # if you want to use black background instead of original image,
     # img_show = np.zeros(img_show.shape, dtype=np.uint8)
-
+    print(scores)
     img_show = draw_skeleton(img_show,
                              keypoints,
                              scores,
                              openpose_skeleton=openpose_skeleton,
-                             kpt_thr=0.43)
+                             kpt_thr=4)
 
     img_show = cv2.resize(img_show, (960, 540))
     cv2.imshow('img', img_show)
