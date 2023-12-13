@@ -12,10 +12,13 @@ class RTMDet(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
+                 mean: tuple = (103.5300, 116.2800, 123.6750),
+                 std: tuple = (57.3750, 57.1200, 58.3950),
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model,
                          model_input_size,
+                         mean, std,
                          backend=backend,
                          device=device)
 
@@ -54,6 +57,12 @@ class RTMDet(BaseTool):
         ).astype(np.uint8)
         padded_shape = (int(img.shape[0] * ratio), int(img.shape[1] * ratio))
         padded_img[:padded_shape[0], :padded_shape[1]] = resized_img
+
+        # normalize image
+        if self.mean is not None:
+            self.mean = np.array(self.mean)
+            self.std = np.array(self.std)
+            padded_img = (padded_img - self.mean) / self.std
 
         return padded_img, ratio
 
