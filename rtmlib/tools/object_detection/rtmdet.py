@@ -18,7 +18,8 @@ class RTMDet(BaseTool):
                  device: str = 'cpu'):
         super().__init__(onnx_model,
                          model_input_size,
-                         mean, std,
+                         mean,
+                         std,
                          backend=backend,
                          device=device)
 
@@ -71,10 +72,10 @@ class RTMDet(BaseTool):
         outputs: List[np.ndarray],
         ratio: float = 1.,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Do postprocessing for RTMPose model inference.
+        """Do postprocessing for RTMDet model inference.
 
         Args:
-            outputs (List[np.ndarray]): Outputs of RTMPose model.
+            outputs (List[np.ndarray]): Outputs of RTMDet model.
             ratio (float): Ratio of preprocessing.
 
         Returns:

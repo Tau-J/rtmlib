@@ -117,6 +117,7 @@ cv2.waitKey()
 - [ ] Support TensorRT backend
 - [x] Gradio interface
 - [x] Compatible with Controlnet
+- [x] Support RTMO
 
 ## Model Zoo
 
@@ -158,6 +159,9 @@ Notes:
 | [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |  256x192   | Body 17 Keypoints |
 | [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-384x288-3f5a1437_20230504.zip) |  384x288   | Body 17 Keypoints |
 | [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip) |  384x288   | Body 17 Keypoints |
+|           [RTMO-s](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.zip)           |  640x640   | Body 17 Keypoints |
+|          [RTMO-m](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip)           |  640x640   | Body 17 Keypoints |
+|          [RTMO-l](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip)           |  640x640   | Body 17 Keypoints |
 
 </details>
 
@@ -190,7 +194,7 @@ Notes:
   howpublished = {\url{https://github.com/Tau-J/rtmlib}},
 }
 
-@misc{https://doi.org/10.48550/arxiv.2303.07399,
+@misc{jiang2023,
   doi = {10.48550/ARXIV.2303.07399},
   url = {https://arxiv.org/abs/2303.07399},
   author = {Jiang, Tao and Lu, Peng and Zhang, Li and Ma, Ningsheng and Han, Rui and Lyu, Chengqi and Li, Yining and Chen, Kai},
@@ -199,6 +203,15 @@ Notes:
   publisher = {arXiv},
   year = {2023},
   copyright = {Creative Commons Attribution 4.0 International}
+}
+
+@misc{lu2023rtmo,
+      title={{RTMO}: Towards High-Performance One-Stage Real-Time Multi-Person Pose Estimation},
+      author={Peng Lu and Tao Jiang and Yining Li and Xiangtai Li and Kai Chen and Wenming Yang},
+      year={2023},
+      eprint={2312.07526},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
 
