@@ -95,6 +95,7 @@ cv2.waitKey()
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
     - RTMPose for 17 keypoints
     - RTMW for 133 keypoints
+    - RTMO for one-stage pose estimation (17 keypoints)
 - Visualization
   - [draw_bbox](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L9)
   - [draw_skeleton](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L16)
