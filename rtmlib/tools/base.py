@@ -121,9 +121,6 @@ class BaseTool(metaclass=ABCMeta):
             results = self.compiled_model(input)
             output0 = results[self.output_layer0]
             output1 = results[self.output_layer1]
-            if output0.ndim == output1.ndim:
-                outputs = [output0, output1]
-            else:
-                outputs = [output0]
+            outputs = [output0, output1]
 
         return outputs
