@@ -42,7 +42,7 @@ while cap.isOpened():
                              keypoints,
                              scores,
                              openpose_skeleton=openpose_skeleton,
-                             kpt_thr=0.,
+                             kpt_thr=0.3,
                              line_width=2)
 
     img_show = cv2.resize(img_show, (960, 640))

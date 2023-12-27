@@ -12,8 +12,8 @@ class RTMO(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
-                 mean: tuple = (123.675, 116.28, 103.53),
-                 std: tuple = (58.395, 57.12, 57.375),
+                 mean: tuple = None,
+                 std: tuple = None,
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
