@@ -2,3 +2,4 @@ numpy
 onnxruntime
 opencv-contrib-python
 opencv-python
+tqdm
