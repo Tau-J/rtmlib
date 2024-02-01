@@ -8,6 +8,8 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse  # noqa: F401
 from urllib.request import Request, urlopen
+import zipfile
+import shutil
 
 from tqdm import tqdm
 
@@ -19,6 +21,12 @@ def _get_rtmhub_dir():
             os.path.join(os.getenv('XDG_CACHE_HOME', '~/.cache'), 'rtmlib')))
     return os.path.join(torch_home, 'hub')
 
+def extract_zip(zip_file_path, extract_to_path):
+    if not os.path.exists(extract_to_path):
+        os.makedirs(extract_to_path)
+    
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to_path)
 
 def download_url_to_file(url, dst, hash_prefix=None, progress=True):
     """Download object at the given URL to a local path.
@@ -121,7 +129,7 @@ def download_checkpoint(url: str,
     parts = urlparse(url)
     filename = filename or os.path.basename(parts.path)
     cached_file = dst_dir / filename
-    onnx_name = f"{dst_dir}/{str(filename).split('.')[0]}.onnx"
+    onnx_name = Path(dst_dir,str(filename).split('.')[0]+".onnx")
 
     if not cached_file.exists():
         if os.path.exists(onnx_name):
@@ -136,16 +144,22 @@ def download_checkpoint(url: str,
         download_url_to_file(url, cached_file, hash_prefix, progress=progress)
 
     if str(cached_file).split('.')[-1] == 'zip':
-        os.system(f'unzip -d {dst_dir}/tmp {cached_file}')
+        # os.system(f'unzip -d {dst_dir}/tmp {cached_file}')
+        tmp_dir = Path(Path(cached_file).parent, "tmp")
+        extract_zip(cached_file, tmp_dir)
         cached_list = glob(f'{dst_dir}/**', recursive=True)
 
         for each in cached_list:
             if each[-12:] == 'end2end.onnx':
                 cached_onnx = each
                 break
-        os.system(f'mv {cached_onnx} {onnx_name}')
-        os.system(f'rm -rf {cached_file}')
-        os.system(f'rm -rf {dst_dir}/tmp')
+        # os.system(f'mv {cached_onnx} {onnx_name}')
+        # os.system(f'rm -rf {cached_file}')
+        # os.system(f'rm -rf {dst_dir}/tmp')
+        shutil.move(cached_onnx, onnx_name)
+        os.remove(cached_file)
+        shutil.rmtree(tmp_dir)
+        
         cached_file = onnx_name
 
     return str(cached_file)
