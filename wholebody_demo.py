@@ -15,7 +15,7 @@ openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 wholebody = PoseTracker(
     Wholebody,
-    det_frequency=100,
+    det_frequency=7,
     to_openpose=openpose_skeleton,
     mode='performance',  # balanced, performance, lightweight
     backend=backend,
@@ -38,7 +38,7 @@ while cap.isOpened():
 
     # if you want to use black background instead of original image,
     # img_show = np.zeros(img_show.shape, dtype=np.uint8)
-    print(scores)
+    # print(scores)
     img_show = draw_skeleton(img_show,
                              keypoints,
                              scores,
