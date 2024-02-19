@@ -41,18 +41,7 @@ pip install -e .
 
 ## Quick Start
 
-Run `webui.py`:
-
-```shell
-# Please make sure you have installed gradio
-# pip install gradio
-
-python webui.py
-```
-
-![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
-
-Here is also a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
+Here is a simple demo to show how to use rtmlib to conduct pose estimation on a single image.
 
 ```python
 import cv2
@@ -83,11 +72,25 @@ cv2.imshow('img', img_show)
 cv2.waitKey()
 ```
 
+## WebUI
+
+Run `webui.py`:
+
+```shell
+# Please make sure you have installed gradio
+# pip install gradio
+
+python webui.py
+```
+
+![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
+
 ## APIs
 
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
   - [Body](/rtmlib/tools/solution/body.py)
+  - [Hand](/rtmlib/tools/solution/hand.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
@@ -100,29 +103,38 @@ cv2.waitKey()
   - [draw_bbox](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L9)
   - [draw_skeleton](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L16)
 
-## TODO
+For high-level APIs (`Solution`), you can choose to pass `mode` or `det`+`pose` arguments to specify the detector and pose estimator you want to use.
 
-- [x] Support MMPose-style skeleton visualization
-- [x] Support OpenPose-style skeleton visualization
-- [x] Support WholeBody
-- [x] Support Hand
-- [ ] Support Face
-- [ ] Support Animal
-- [x] Support ONNXRuntime backend
-- [x] Support auto download and cache models
-- [x] Lightweight models
-- [x] Support 3 modes: `performance`, `lightweight`, `balanced` to select
-- [ ] Support alias to choose model
-- [x] Support naive PoseTracker
-- [x] Support OpenVINO backend
-- [ ] Support TensorRT backend
-- [x] Gradio interface
-- [x] Compatible with Controlnet
-- [x] Support RTMO
+```Python
+# By mode
+wholebody = Wholebody(mode='performance',  # 'performance', 'lightweight', 'balanced'. Default: 'balanced'
+                      backend=backend,
+                      device=device)
+
+# By det and pose
+body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',
+            det_input_size=(640, 640),
+            pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip',
+            pose_input_size=(288, 384),
+            backend=backend,
+            device=device)
+```
+
+For low-level APIs (`Model`), you can specify the model you want to use by passing the `onnx_model` argument.
+
+```Python
+# By onnx_model (.onnx)
+pose_model = RTMPose(onnx_model='/path/to/your_model.onnx',  # download link or local path
+                     backend=backend, device=device)
+
+# By onnx_model (.zip)
+pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',  # download link or local path
+                     backend=backend, device=device)
+```
 
 ## Model Zoo
 
-By defaults, rtmlib will automatically download and apply models with the best performance. But you can also specify the model you want to use by passing the `onnx_model` argument.
+By defaults, rtmlib will automatically download and apply models with the best performance.
 
 More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose).
 

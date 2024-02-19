@@ -71,7 +71,7 @@ class Body:
         }
     }
 
-    RTMO = {
+    RTMO_MODE = {
         'performance': {
             'pose':
             'https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip',  # noqa
@@ -104,8 +104,8 @@ class Body:
 
             self.one_stage = True
 
-            pose = self.RTMO[mode]['pose']
-            pose_input_size = self.RTMO[mode]['pose_input_size']
+            pose = self.RTMO_MODE[mode]['pose']
+            pose_input_size = self.RTMO_MODE[mode]['pose_input_size']
             self.pose_model = RTMO(pose,
                                    model_input_size=pose_input_size,
                                    to_openpose=to_openpose,
