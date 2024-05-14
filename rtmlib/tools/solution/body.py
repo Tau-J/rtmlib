@@ -99,12 +99,13 @@ class Body:
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
-        if 'rtmo' in pose:
+        if 'rtmo' == pose:
             from .. import RTMO
 
             self.one_stage = True
 
             pose = self.RTMO_MODE[mode]['pose']
+            print("pose: ", pose)
             pose_input_size = self.RTMO_MODE[mode]['pose_input_size']
             self.pose_model = RTMO(pose,
                                    model_input_size=pose_input_size,
@@ -116,13 +117,18 @@ class Body:
 
             self.one_stage = False
 
+            print("before pose: ", pose)
             if pose is None:
                 pose = self.MODE[mode]['pose']
                 pose_input_size = self.MODE[mode]['pose_input_size']
+            pose = "C:/Users/max/.cache/rtmlib/hub/checkpoints/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.onnx"
+            print("after pose: ", pose)
 
+            print("before det: ", det)
             if det is None:
                 det = self.MODE[mode]['det']
                 det_input_size = self.MODE[mode]['det_input_size']
+            print("after det: ", det)
 
             self.det_model = YOLOX(det,
                                    model_input_size=det_input_size,
