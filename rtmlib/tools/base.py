@@ -6,6 +6,13 @@ import cv2
 import numpy as np
 
 from .file import download_checkpoint
+def check_mps_support():
+    try:
+        import onnxruntime
+        providers = onnxruntime.get_available_providers()
+        return 'MPSExecutionProvider' in providers or 'CoreMLExecutionProvider' in providers
+    except ImportError:
+        return False
 
 RTMLIB_SETTINGS = {
     'opencv': {
@@ -16,7 +23,8 @@ RTMLIB_SETTINGS = {
     },
     'onnxruntime': {
         'cpu': 'CPUExecutionProvider',
-        'cuda': 'CUDAExecutionProvider'
+        'cuda': 'CUDAExecutionProvider',
+        'mps': 'CoreMLExecutionProvider' if check_mps_support() else 'CPUExecutionProvider'
     },
 }
 
