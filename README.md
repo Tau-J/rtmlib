@@ -48,7 +48,7 @@ import cv2
 
 from rtmlib import Wholebody, draw_skeleton
 
-device = 'cpu'  # cpu, cuda
+device = 'cpu'  # cpu, cuda, mps
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 img = cv2.imread('./demo.jpg')
 
