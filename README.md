@@ -15,6 +15,19 @@ Optionally, you can use other common backends like opencv, onnxruntime, openvino
 
 - For openvino users, please add the path `<your python path>\envs\<your env name>\Lib\site-packages\openvino\libs` into your environment path.
 
+## TODO for intergrating into Pose2Sim
+1. Write PoseEstimation.py in Pose2Sim (based on wholebody_demo.py).
+2. Modify Wholebody.py and Body.py to use the latest model and allow flexible import of models.
+3. Modify setup.py for available users pip install "git adress".
+4. Make a link to provide lastest model in .onnx format (online conversion was too slow and mmdeploy can be a challenge for users).
+5. Make interactive enviroment between Pose2Sim and rtmlib(It should be available that import rtmlib's function on Pose2Sim env).
+
+
+
+
+
+
+
 ## Installation
 
 - install from pypi:
