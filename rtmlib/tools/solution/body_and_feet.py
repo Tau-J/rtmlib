@@ -31,7 +31,7 @@ while cap.isOpened():
     img_show = draw_skeleton(img_show,
                              keypoints,
                              scores,
-                             skeleton_type='halpe26',
+                             openpose_skeleton=openpose_skeleton,
                              kpt_thr=0.43)
 
     img_show = cv2.resize(img_show, (960, 540))
