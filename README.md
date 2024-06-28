@@ -90,6 +90,7 @@ python webui.py
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
   - [Body](/rtmlib/tools/solution/body.py)
+  - [Body_and_feet](/rtmlib/tools/solution/body_and_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
@@ -97,6 +98,7 @@ python webui.py
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
     - RTMPose for 17 keypoints
+    - RTMPose for 26 keypoints
     - RTMW for 133 keypoints
     - DWPose for 133 keypoints
     - RTMO for one-stage pose estimation (17 keypoints)
@@ -181,9 +183,24 @@ Notes:
 </details>
 
 <details open>
+<summary><b>Body 26 Keypoints</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | AUC (Body8) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.zip) |  256x192   |   66.35    | trained on 7 datasets |
+| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip) |  256x192   |   68.62    | trained on 7 datasets |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip) |  256x192   |   71.91    | trained on 7 datasets |
+| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.pth) |  256x192   |   73.19    | trained on 7 datasets |
+| [RTMPose-m](https://github.com/open-mmlab/mmpose/blob/dev-1.x/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-m_8xb512-700e_body8-halpe26-384x288.py) |  384x288   |   73.56    | trained on 7 datasets |
+| [RTMPose-l](https://github.com/open-mmlab/mmpose/blob/dev-1.x/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-l_8xb512-700e_body8-halpe26-384x288.py) |  384x288   |   74.38    | trained on 7 datasets |
+| [RTMPose-x](https://github.com/open-mmlab/mmpose/blob/dev-1.x/projects/rtmpose/rtmpose/body_2d_keypoint/rtmpose-x_8xb256-700e_body8-halpe26-384x288.py) |  384x288   |   74.82    | trained on 7 datasets |
+
+</details>
+
+<details open>
 <summary><b>WholeBody 133 Keypoints</b></summary>
 
-|                                                                     ONNX Model                                                                     | Input Size |      |           Description           |
+|                                                                     ONNX Model                                                                     | Input Size |   AP (Whole)   |           Description           |
 | :------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--: | :-----------------------------: |
 | [DWPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-ucoco_dw-ucoco_270e-256x192-dcf277bf_20230728.zip) |  256x192   | 48.5 | trained on COCO-Wholebody+UBody |
 | [DWPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-ucoco_dw-ucoco_270e-256x192-3fd922c8_20230728.zip) |  256x192   | 53.8 | trained on COCO-Wholebody+UBody |
