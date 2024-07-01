@@ -42,7 +42,7 @@ while cap.isOpened():
 
 import numpy as np
 
-class Body_and_Feet:
+class BodyWithFeet:
     """
     Halpe26 class for human pose estimation using the Halpe26 keypoint format.
     This class supports different modes of operation and can output in OpenPose format.
