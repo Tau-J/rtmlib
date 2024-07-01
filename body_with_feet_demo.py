@@ -5,7 +5,7 @@ from rtmlib import BodyWithFeet, PoseTracker, draw_skeleton
 device = 'cpu'
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 
-cap = cv2.VideoCapture(r"D:\rtmlib_Pose2Sim\demo.jpg")  # Video file path
+cap = cv2.VideoCapture(0)  # Video file path
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
