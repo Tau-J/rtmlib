@@ -90,7 +90,7 @@ python webui.py
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
   - [Body](/rtmlib/tools/solution/body.py)
-  - [Body_and_feet](/rtmlib/tools/solution/body_and_feet.py)
+  - [Body_with_feet](/rtmlib/tools/solution/body_with_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
