@@ -178,6 +178,10 @@ class PoseTracker:
 
             self.track_ids_last_frame = track_ids_current_frame
 
+            # reorder keypoints, scores according to track_id
+            keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
+            scores = np.array([scores[i] for i in self.track_ids_last_frame])
+
         self.bboxes_last_frame = bboxes_current_frame
         self.frame_cnt += 1
 
