@@ -252,6 +252,16 @@ Notes:
       archivePrefix={arXiv},
       primaryClass={cs.CV}
 }
+
+@misc{jiang2024rtmwrealtimemultiperson2d,
+      title={RTMW: Real-Time Multi-Person 2D and 3D Whole-body Pose Estimation}, 
+      author={Tao Jiang and Xinchen Xie and Yining Li},
+      year={2024},
+      eprint={2407.08634},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2407.08634}, 
+}
 ```
 
 ## Acknowledgement
