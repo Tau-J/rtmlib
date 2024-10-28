@@ -24,10 +24,10 @@ RTMLIB_SETTINGS = {
     'onnxruntime': {
         'cpu': 'CPUExecutionProvider',
         'cuda': 'CUDAExecutionProvider',
+        'rocm': 'ROCMExecutionProvider',
         'mps': 'CoreMLExecutionProvider' if check_mps_support() else 'CPUExecutionProvider'
     },
 }
-
 
 class BaseTool(metaclass=ABCMeta):
 
