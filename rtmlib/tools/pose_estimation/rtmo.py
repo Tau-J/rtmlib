@@ -38,7 +38,7 @@ class RTMO(BaseTool):
         Args:
             img (np.ndarray): Input image in shape.
 
-        Returns:
+        Returns:1
             tuple:
             - resized_img (np.ndarray): Preprocessed image.
             - center (np.ndarray): Center of image.
