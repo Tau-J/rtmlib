@@ -3,5 +3,4 @@ from .skeleton import coco17, coco133, hand21, openpose18, openpose134
 
 __all__ = [
     'draw_skeleton', 'draw_skeleton_fixColor', 'draw_bbox', 'coco17', 'coco133', 'hand21', 'openpose18',
-    'openpose134'
-]
+    'openpose134', 'halpe26']

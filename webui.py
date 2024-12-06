@@ -64,9 +64,9 @@ with gr.Blocks() as demo:
                               label='Choose backend',
                               info='opencv / onnxruntime / openvino',
                               value='onnxruntime')
-        device = gr.Dropdown(['cpu', 'cuda'],
+        device = gr.Dropdown(['cpu', 'cuda', 'mps'],
                              label='Choose device',
-                             info='cpu / cuda',
+                             info='cpu / cuda / mps',
                              value='cpu')
 
         gr.Markdown('## Output')

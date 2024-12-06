@@ -48,7 +48,7 @@ import cv2
 
 from rtmlib import Wholebody, draw_skeleton
 
-device = 'cpu'  # cpu, cuda
+device = 'cpu'  # cpu, cuda, mps
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 img = cv2.imread('./demo.jpg')
 
@@ -90,6 +90,7 @@ python webui.py
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
   - [Body](/rtmlib/tools/solution/body.py)
+  - [Body_with_feet](/rtmlib/tools/solution/body_with_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
@@ -97,6 +98,7 @@ python webui.py
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
     - RTMPose for 17 keypoints
+    - RTMPose for 26 keypoints
     - RTMW for 133 keypoints
     - DWPose for 133 keypoints
     - RTMO for one-stage pose estimation (17 keypoints)
@@ -181,9 +183,24 @@ Notes:
 </details>
 
 <details open>
+<summary><b>Body 26 Keypoints</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | AUC (Body8) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.zip) |  256x192   |   66.35    | trained on 7 datasets |
+| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip) |  256x192   |   68.62    | trained on 7 datasets |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip) |  256x192   |   71.91    | trained on 7 datasets |
+| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.zip) |  256x192   |   73.19    | trained on 7 datasets |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-384x288-89e6428b_20230605.zip) |  384x288   |   73.56    | trained on 7 datasets |
+| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-384x288-734182ce_20230605.zip) |  384x288   |   74.38    | trained on 7 datasets |
+| [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip) |  384x288   |   74.82    | trained on 7 datasets |
+
+</details>
+
+<details open>
 <summary><b>WholeBody 133 Keypoints</b></summary>
 
-|                                                                     ONNX Model                                                                     | Input Size |      |           Description           |
+|                                                                     ONNX Model                                                                     | Input Size |   AP (Whole)   |           Description           |
 | :------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--: | :-----------------------------: |
 | [DWPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-ucoco_dw-ucoco_270e-256x192-dcf277bf_20230728.zip) |  256x192   | 48.5 | trained on COCO-Wholebody+UBody |
 | [DWPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-ucoco_dw-ucoco_270e-256x192-3fd922c8_20230728.zip) |  256x192   | 53.8 | trained on COCO-Wholebody+UBody |
@@ -234,6 +251,16 @@ Notes:
       eprint={2312.07526},
       archivePrefix={arXiv},
       primaryClass={cs.CV}
+}
+
+@misc{jiang2024rtmwrealtimemultiperson2d,
+      title={RTMW: Real-Time Multi-Person 2D and 3D Whole-body Pose Estimation}, 
+      author={Tao Jiang and Xinchen Xie and Yining Li},
+      year={2024},
+      eprint={2407.08634},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2407.08634}, 
 }
 ```
 

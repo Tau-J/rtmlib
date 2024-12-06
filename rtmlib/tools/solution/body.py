@@ -99,7 +99,7 @@ class Body:
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
-        if 'rtmo' == pose:
+        if pose is not None and 'rtmo' in pose:
             from .. import RTMO
 
             self.one_stage = True
