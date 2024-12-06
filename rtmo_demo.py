@@ -9,7 +9,6 @@ import random
 device = 'cuda'
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 
-# video_path = 'D:/data/Panoptic/160224_haggling1/hdVideos/hd_00_03.mp4'
 cap = cv2.VideoCapture(0)
 cap.set(6, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
