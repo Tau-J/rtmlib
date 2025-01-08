@@ -92,6 +92,7 @@ python webui.py
   - [Body](/rtmlib/tools/solution/body.py)
   - [Body_with_feet](/rtmlib/tools/solution/body_with_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
+  - [Custom](/rtmlib/tools/solution/custom.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
 - Models (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
@@ -121,6 +122,16 @@ body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onn
             pose_input_size=(288, 384),
             backend=backend,
             device=device)
+
+# By det and pose with custom classes
+custom = Custom(det_class='RTMDet',
+                det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip',
+                det_input_size=(320,320),
+                pose_class='RTMPose',
+                pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-hand5_pt-aic-coco_210e-256x256-74fb594_20230320.zip',
+                pose_input_size=(256, 256),
+                backend=backend,
+                device=device)
 ```
 
 For low-level APIs (`Model`), you can specify the model you want to use by passing the `onnx_model` argument.
