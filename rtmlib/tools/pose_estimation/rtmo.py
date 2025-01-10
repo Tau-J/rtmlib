@@ -5,6 +5,7 @@ import numpy as np
 
 from ..base import BaseTool
 from .post_processings import convert_coco_to_openpose
+from ..object_detection.post_processings import multiclass_nms
 
 
 class RTMO(BaseTool):
@@ -87,19 +88,22 @@ class RTMO(BaseTool):
         """
         det_outputs, pose_outputs = outputs
 
-        # onnx contains nms module
-        pack_dets = (det_outputs[0, :, :4], det_outputs[0, :, 4])
-        final_boxes, final_scores = pack_dets
+        # onnx contains nms module (?)
+        final_boxes, final_scores = (det_outputs[0, :, :4], det_outputs[0, :, 4])
         final_boxes /= ratio
-        isscore = final_scores > 0.3
-        isbbox = [i for i in isscore]
-        # final_boxes = final_boxes[isbbox]
-
-        # decode pose outputs
         keypoints, scores = pose_outputs[0, :, :, :2], pose_outputs[0, :, :, 2]
         keypoints = keypoints / ratio
 
-        keypoints = keypoints[isbbox]
-        scores = scores[isbbox]
+        # apply nms
+        dets, keep = multiclass_nms(final_boxes, 
+                    final_scores[:, np.newaxis],
+                    nms_thr=0.45,
+                    score_thr=0.7)
+        if keep is not None:
+            keypoints = keypoints[keep]
+            scores = scores[keep]
+        else:
+            keypoints = np.expand_dims(np.zeros_like(keypoints[0]), axis=0)
+            scores = np.expand_dims(np.zeros_like(scores[0]), axis=0)
 
         return keypoints, scores
