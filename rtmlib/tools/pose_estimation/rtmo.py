@@ -15,18 +15,25 @@ class RTMO(BaseTool):
                  model_input_size: tuple = (640, 640),
                  mean: tuple = None,
                  std: tuple = None,
+                 nms_thr: float = 0.45,
+                 score_thr: float = 0.7,
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model, model_input_size, mean, std, backend,
                          device)
         self.to_openpose = to_openpose
+        self.nms_thr = nms_thr
+        self.score_thr = score_thr
 
-    def __call__(self, image: np.ndarray):
+    def __call__(self, image: np.ndarray, nms_thr: float = None, score_thr: float = None):
+        nms_thr = nms_thr if nms_thr is not None else self.nms_thr
+        score_thr = score_thr if score_thr is not None else self.score_thr
+
         image, ratio = self.preprocess(image)
         outputs = self.inference(image)
 
-        keypoints, scores = self.postprocess(outputs, ratio)
+        keypoints, scores = self.postprocess(outputs, ratio, nms_thr, score_thr)
 
         if self.to_openpose:
             keypoints, scores = convert_coco_to_openpose(keypoints, scores)
@@ -74,6 +81,8 @@ class RTMO(BaseTool):
         self,
         outputs: List[np.ndarray],
         ratio: float = 1.,
+        nms_thr: float = None,
+        score_thr: float = None,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Do postprocessing for RTMO model inference.
 
@@ -97,8 +106,8 @@ class RTMO(BaseTool):
         # apply nms
         dets, keep = multiclass_nms(final_boxes, 
                     final_scores[:, np.newaxis],
-                    nms_thr=0.45,
-                    score_thr=0.7)
+                    nms_thr=nms_thr,
+                    score_thr=score_thr)
         if keep is not None:
             keypoints = keypoints[keep]
             scores = scores[keep]
