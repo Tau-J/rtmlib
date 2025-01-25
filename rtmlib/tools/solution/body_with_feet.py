@@ -2,16 +2,16 @@
 Example:
 
 import cv2
-from rtmlib import Halpe26, draw_skeleton
+from rtmlib import BodyWithFeet, draw_skeleton
 
 device = 'cuda'
 backend = 'onnxruntime'  # opencv, onnxruntime
 
 cap = cv2.VideoCapture('./demo.mp4')
 
-to_openpose = True  # True for openpose-style, False for mmpose-style
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-halpe26 = Halpe26(to_openpose=to_openpose,
+body_with_feet = BodyWithFeet(to_openpose=openpose_skeleton,
                   backend=backend,
                   device=device)
 
@@ -24,7 +24,7 @@ while cap.isOpened():
     if not success:
         break
 
-    keypoints, scores = halpe26(frame)
+    keypoints, scores = body_with_feet(frame)
 
     img_show = frame.copy()
 
@@ -44,7 +44,7 @@ import numpy as np
 
 class BodyWithFeet:
     """
-    Halpe26 class for human pose estimation using the Halpe26 keypoint format.
+    BodyWithFeet class for human pose estimation using the Halpe26 keypoint format.
     This class supports different modes of operation and can output in OpenPose format.
     """
 

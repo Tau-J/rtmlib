@@ -110,7 +110,7 @@ class YOLOX(BaseTool):
             boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2] / 2.
             boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.
             boxes_xyxy /= ratio
-            dets = multiclass_nms(boxes_xyxy,
+            dets, keep = multiclass_nms(boxes_xyxy,
                                   scores,
                                   nms_thr=self.nms_thr,
                                   score_thr=self.score_thr)

@@ -2,22 +2,50 @@
 Example:
 
 import cv2
-from rtmlib import PoseTracker, Wholebody, draw_skeleton
+from functools import partial
+from rtmlib import PoseTracker, Wholebody, Custom, draw_skeleton
 
 device = 'cuda'
 backend = 'onnxruntime'  # opencv, onnxruntime
 
-openpose_skeleton = True  # True for openpose-style, False for mmpose-style
+openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 cap = cv2.VideoCapture('./demo.mp4')
 
-wholebody = PoseTracker(Wholebody,
+pose_tracker = PoseTracker(Wholebody,
                         det_frequency=10,  # detect every 10 frames
                         to_openpose=openpose_skeleton,
                         backend=backend, device=device)
 
-                        frame_idx = 0
+                        
+# # Initialized slightly differently for Custom solution:
+# custom = partial(Custom,
+#                 to_openpose=openpose_skeleton,
+#                 pose_class='RTMO',
+#                 pose='https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip', # noqa
+#                 pose_input_size=(640,640),
+#                 backend=backend,
+#                 device=device)
+# # or
+# custom = partial(
+#             Custom,
+#             to_openpose=openpose_skeleton,
+#             det_class='YOLOX',
+#             det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip', # noqa
+#             det_input_size=(640, 640),
+#             pose_class='RTMPose',
+#             pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip', # noqa
+#             pose_input_size=(192, 256),
+#             backend=backend,
+#             device=device)
+# # then
+# pose_tracker = PoseTracker(custom,
+#                         det_frequency=10,
+#                         to_openpose=openpose_skeleton,
+#                         backend=backend, device=device)
 
+
+frame_idx = 0
 while cap.isOpened():
     success, frame = cap.read()
     frame_idx += 1
@@ -25,7 +53,7 @@ while cap.isOpened():
     if not success:
         break
 
-    keypoints, scores = wholebody(frame)
+    keypoints, scores = pose_tracker(frame)
 
     img_show = frame.copy()
 
@@ -96,10 +124,10 @@ def pose_to_bbox(keypoints: np.ndarray, expansion: float = 1.25) -> np.ndarray:
 
 
 class PoseTracker:
-    """Pose tracker for wholebody pose estimation.
+    """Pose tracker for pose estimation.
 
     Args:
-        solution (type): rtmlib solutions, e.g. Wholebody, Body, etc.
+        solution (type): rtmlib solutions, e.g. Wholebody, Body, Custom, etc.
         det_frequency (int): Frequency of object detection.
         mode (str): 'performance', 'lightweight', or 'balanced'.
         to_openpose (bool): Whether to use openpose-style skeleton.
@@ -123,7 +151,10 @@ class PoseTracker:
                          backend=backend,
                          device=device)
 
-        self.det_model = model.det_model
+        try:
+            self.det_model = model.det_model
+        except: # rtmo
+            self.det_model = None
         self.pose_model = model.pose_model
 
         self.det_frequency = det_frequency
@@ -144,23 +175,25 @@ class PoseTracker:
 
     def __call__(self, image: np.ndarray):
 
-        if self.frame_cnt % self.det_frequency == 0:
-            bboxes = self.det_model(image)
-        else:
-            bboxes = self.bboxes_last_frame
-
-        keypoints, scores = self.pose_model(image, bboxes=bboxes)
+        if self.det_model is not None:
+            if self.frame_cnt % self.det_frequency == 0:
+                bboxes = self.det_model(image)
+            else:
+                bboxes = self.bboxes_last_frame
+            keypoints, scores = self.pose_model(image, bboxes=bboxes)
+        else:  # rtmo
+            keypoints, scores = self.pose_model(image)
+            
 
         if not self.tracking:
             # without tracking
-
             bboxes_current_frame = []
             for kpts in keypoints:
                 bbox = pose_to_bbox(kpts)
                 bboxes_current_frame.append(bbox)
+
         else:
             # with tracking
-
             if len(self.track_ids_last_frame) == 0:
                 self.next_id = len(self.bboxes_last_frame)
                 self.track_ids_last_frame = list(range(self.next_id))
@@ -177,6 +210,10 @@ class PoseTracker:
                     bboxes_current_frame.append(bbox)
 
             self.track_ids_last_frame = track_ids_current_frame
+
+            # reorder keypoints, scores according to track_id
+            keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
+            scores = np.array([scores[i] for i in self.track_ids_last_frame])
 
         self.bboxes_last_frame = bboxes_current_frame
         self.frame_cnt += 1
