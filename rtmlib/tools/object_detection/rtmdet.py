@@ -38,26 +38,29 @@ class RTMDet(BaseTool):
 
         Returns:
             tuple:
-            - resized_img (np.ndarray): Preprocessed image.
-            - center (np.ndarray): Center of image.
-            - scale (np.ndarray): Scale of image.
+            - padded_img (np.ndarray): Preprocessed image.
+            - ratio (float): Scale factor applied to the image.
         """
-        if len(img.shape) == 3:
-            padded_img = np.ones(
-                (self.model_input_size[0], self.model_input_size[1], 3),
-                dtype=np.uint8) * 114
+        if img.shape[:2] == tuple(self.model_input_size[:2]):
+            padded_img = img.copy()
+            ratio = 1.
         else:
-            padded_img = np.ones(self.model_input_size, dtype=np.uint8) * 114
+            if len(img.shape) == 3:
+                padded_img = np.ones(
+                    (self.model_input_size[0], self.model_input_size[1], 3),
+                    dtype=np.uint8) * 114
+            else:
+                padded_img = np.ones(self.model_input_size, dtype=np.uint8) * 114
 
-        ratio = min(self.model_input_size[0] / img.shape[0],
-                    self.model_input_size[1] / img.shape[1])
-        resized_img = cv2.resize(
-            img,
-            (int(img.shape[1] * ratio), int(img.shape[0] * ratio)),
-            interpolation=cv2.INTER_LINEAR,
-        ).astype(np.uint8)
-        padded_shape = (int(img.shape[0] * ratio), int(img.shape[1] * ratio))
-        padded_img[:padded_shape[0], :padded_shape[1]] = resized_img
+            ratio = min(self.model_input_size[0] / img.shape[0],
+                        self.model_input_size[1] / img.shape[1])
+            resized_img = cv2.resize(
+                img,
+                (int(img.shape[1] * ratio), int(img.shape[0] * ratio)),
+                interpolation=cv2.INTER_LINEAR,
+            ).astype(np.uint8)
+            padded_shape = (int(img.shape[0] * ratio), int(img.shape[1] * ratio))
+            padded_img[:padded_shape[0], :padded_shape[1]] = resized_img
 
         # normalize image
         if self.mean is not None:
