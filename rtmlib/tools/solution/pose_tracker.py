@@ -185,7 +185,7 @@ class PoseTracker:
             keypoints, scores = self.pose_model(image)
             
 
-        if not self.tracking:
+        if not self.tracking and self.det_frequency != 1:
             # without tracking
             bboxes_current_frame = []
             for kpts in keypoints:
