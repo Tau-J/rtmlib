@@ -133,7 +133,7 @@ def download_checkpoint(url: str,
 
     if not cached_file.exists():
         if os.path.exists(onnx_name):
-            return onnx_name
+            return str(onnx_name)
 
         sys.stderr.write('Downloading: "{}" to {}\n'.format(url, cached_file))
         hash_prefix = None
