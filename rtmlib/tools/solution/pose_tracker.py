@@ -17,7 +17,7 @@ pose_tracker = PoseTracker(Wholebody,
                         to_openpose=openpose_skeleton,
                         backend=backend, device=device)
 
-                        
+
 # # Initialized slightly differently for Custom solution:
 # custom = partial(Custom,
 #                 to_openpose=openpose_skeleton,
@@ -175,15 +175,21 @@ class PoseTracker:
 
     def __call__(self, image: np.ndarray):
 
+        pose_model_name = type(self.pose_model).__name__
+
         if self.det_model is not None:
             if self.frame_cnt % self.det_frequency == 0:
                 bboxes = self.det_model(image)
             else:
                 bboxes = self.bboxes_last_frame
-            keypoints, scores = self.pose_model(image, bboxes=bboxes)
+
+            if pose_model_name == 'RTMPose3d':
+                keypoints, scores, keypoints_simcc, keypoints2d = self.pose_model(image)
+            else:
+                keypoints, scores = self.pose_model(image, bboxes=bboxes)
+
         else:  # rtmo
             keypoints, scores = self.pose_model(image)
-            
 
         if not self.tracking:
             # without tracking
@@ -210,7 +216,6 @@ class PoseTracker:
                     bboxes_current_frame.append(bbox)
 
             self.track_ids_last_frame = track_ids_current_frame
-
             # reorder keypoints, scores according to track_id
             keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
             scores = np.array([scores[i] for i in self.track_ids_last_frame])
@@ -218,7 +223,10 @@ class PoseTracker:
         self.bboxes_last_frame = bboxes_current_frame
         self.frame_cnt += 1
 
-        return keypoints, scores
+        if pose_model_name == 'RTMPose3d':
+            return keypoints, scores, keypoints_simcc, keypoints2d
+
+        return keypoints, scores,
 
     def track_by_iou(self, bbox):
         """Get track id using IoU tracking greedily.
