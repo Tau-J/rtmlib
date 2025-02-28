@@ -60,7 +60,12 @@ class BaseTool(metaclass=ABCMeta):
 
         elif backend == 'onnxruntime':
             import onnxruntime as ort
-            providers = RTMLIB_SETTINGS[backend][device]
+            # 'cuda:device_id'
+            if (device not in RTMLIB_SETTINGS[backend]) and ("cuda" in device):
+                device_id = int(device.split(":")[-1])
+                providers = ('CUDAExecutionProvider', {'device_id': device_id})
+            else:
+                providers = RTMLIB_SETTINGS[backend][device]
 
             self.session = ort.InferenceSession(path_or_bytes=onnx_model,
                                                 providers=[providers])
