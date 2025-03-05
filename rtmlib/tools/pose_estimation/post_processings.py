@@ -49,8 +49,7 @@ def get_simcc_maximum(simcc_x: np.ndarray,
 
 def get_simcc_maximum3d(simcc_x: np.ndarray,
                       simcc_y: np.ndarray,
-                      simcc_z: np.ndarray,
-                      apply_softmax: bool = False) -> Tuple[np.ndarray, np.ndarray]:
+                      simcc_z: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
 
     Note:
@@ -60,17 +59,18 @@ def get_simcc_maximum3d(simcc_x: np.ndarray,
         heatmap width: W
 
     Args:
-        encoded_keypoints (dict): encoded keypoints with simcc representations.
-        apply_softmax (bool): whether to apply softmax on the heatmap.
-            Defaults to False.
+        simcc_x (np.ndarray): x-axis SimCC in shape (K, Wx) or (N, K, Wx)
+        simcc_y (np.ndarray): y-axis SimCC in shape (K, Wy) or (N, K, Wy)
+        simcc_z (np.ndarray): z-axis SimCC in shape (K, Wz) or (N, K, Wz)
 
     Returns:
         tuple:
         - locs (np.ndarray): locations of maximum heatmap responses in shape
-            (K, 2) or (N, K, 2)
+            (K, 3) or (N, K, 3)
         - vals (np.ndarray): values of maximum heatmap responses in shape
             (K,) or (N, K)
     """
+
     assert isinstance(simcc_x, np.ndarray), 'simcc_x should be numpy.ndarray'
     assert isinstance(simcc_y, np.ndarray), 'simcc_y should be numpy.ndarray'
     assert isinstance(simcc_z, np.ndarray), 'simcc_z should be numpy.ndarray'
@@ -90,15 +90,6 @@ def get_simcc_maximum3d(simcc_x: np.ndarray,
         simcc_z = simcc_z.reshape(n * k, -1)
     else:
         n = None
-
-    if apply_softmax:
-        simcc_x = simcc_x - np.max(simcc_x, axis=1, keepdims=True)
-        simcc_y = simcc_y - np.max(simcc_y, axis=1, keepdims=True)
-        simcc_z = simcc_z - np.max(simcc_z, axis=1, keepdims=True)
-        ex, ey, ez = np.exp(simcc_x), np.exp(simcc_y), np.exp(simcc_z)
-        simcc_x = ex / np.sum(ex, axis=1, keepdims=True)
-        simcc_y = ey / np.sum(ey, axis=1, keepdims=True)
-        simcc_z = ez / np.sum(ez, axis=1, keepdims=True)
 
     x_locs = np.argmax(simcc_x, axis=1)
     y_locs = np.argmax(simcc_y, axis=1)

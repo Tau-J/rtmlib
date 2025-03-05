@@ -9,13 +9,10 @@ backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 
 cap = cv2.VideoCapture(0)
 
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
-
 wholebody3d = PoseTracker(
     Wholebody3d,
     det_frequency=7,
     tracking=False,
-    to_openpose=openpose_skeleton,
     backend=backend,
     device=device)
 
@@ -36,7 +33,6 @@ while cap.isOpened():
     img_show = draw_skeleton(img_show,
                              keypoints_2d,
                              scores,
-                             openpose_skeleton=openpose_skeleton,
                              kpt_thr=0.5)
 
     cv2.imshow('img', img_show)

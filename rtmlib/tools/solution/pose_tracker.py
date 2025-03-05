@@ -184,7 +184,7 @@ class PoseTracker:
                 bboxes = self.bboxes_last_frame
 
             if pose_model_name == 'RTMPose3d':
-                keypoints, scores, keypoints_simcc, keypoints2d = self.pose_model(image)
+                keypoints, scores, keypoints_simcc, keypoints2d = self.pose_model(image, bboxes=bboxes)
             else:
                 keypoints, scores = self.pose_model(image, bboxes=bboxes)
 
@@ -194,9 +194,15 @@ class PoseTracker:
         if not self.tracking:
             # without tracking
             bboxes_current_frame = []
-            for kpts in keypoints:
-                bbox = pose_to_bbox(kpts)
-                bboxes_current_frame.append(bbox)
+            if pose_model_name == 'RTMPose3d':
+                for kpts in keypoints2d:
+                    bbox = pose_to_bbox(kpts)
+                    bboxes_current_frame.append(bbox)
+            else:
+                for kpts in keypoints:
+                    bbox = pose_to_bbox(kpts)
+                    bboxes_current_frame.append(bbox)
+
 
         else:
             # with tracking

@@ -1,9 +1,9 @@
-from typing import List, Tuple, Optional, Union
+from typing import List, Tuple, Optional
 
 import numpy as np
 
 from ..base import BaseTool
-from .post_processings import convert_coco_to_openpose, get_simcc_maximum3d
+from .post_processings import get_simcc_maximum3d
 from .pre_processings import bbox_xyxy2cs, top_down_affine
 
 
@@ -43,8 +43,9 @@ class RTMPose3d(BaseTool):
         keypoints_simcc = np.concatenate(keypoints_simcc, axis=0)
         keypoints_2d = np.concatenate(keypoints_2d, axis=0)
 
-        if self.to_openpose:
-            keypoints, scores = convert_coco_to_openpose(keypoints, scores)
+        # Not Implemented
+        # if self.to_openpose:
+        #     keypoints, scores = convert_coco_to_openpose(keypoints, scores)
 
         return keypoints, scores, keypoints_simcc, keypoints_2d
 
@@ -94,8 +95,10 @@ class RTMPose3d(BaseTool):
 
         Returns:
             tuple:
-            - keypoints (np.ndarray): Rescaled keypoints.
+            - keypoints (np.ndarray): Rescaled 3D keypoints.
             - scores (np.ndarray): Model predict scores.
+            - keypoints_simcc (np.ndarray): Rescaled 3D keypoints in simcc.
+            - keypoints_2d (np.ndarray): Rescaled 2D keypoints
         """
         # decode simcc
         simcc_x, simcc_y, simcc_z = outputs
@@ -111,5 +114,5 @@ class RTMPose3d(BaseTool):
         keypoints_2d = keypoints[..., :2].copy()
         keypoints_2d = keypoints_2d / self.model_input_size * scale \
                 + center - 0.5 * scale
-        print(keypoints_simcc[0][0])
+
         return keypoints, scores, keypoints_simcc, keypoints_2d
