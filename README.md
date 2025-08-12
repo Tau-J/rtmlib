@@ -63,9 +63,9 @@ keypoints, scores = wholebody(img)
 # visualize
 
 # if you want to use black background instead of original image,
-# img_show = np.zeros(img_show.shape, dtype=np.uint8)
+# img_show = np.zeros(img.shape, dtype=np.uint8)
 
-img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
+img_show = draw_skeleton(img, keypoints, scores, kpt_thr=0.5)
 
 
 cv2.imshow('img', img_show)
