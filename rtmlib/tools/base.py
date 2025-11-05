@@ -71,7 +71,7 @@ class BaseTool(metaclass=ABCMeta):
                                                 providers=[providers])
 
         elif backend == 'openvino':
-            from openvino.runtime import Core
+            from openvino import Core
             core = Core()
             model_onnx = core.read_model(model=onnx_model)
 
