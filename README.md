@@ -94,6 +94,7 @@ python webui.py
   - [Hand](/rtmlib/tools/solution/hand.py)
   - [Custom](/rtmlib/tools/solution/custom.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
+  - [Wholebody3d](/rtmlib/tools/solution/wholebody3d.py)
 - Models (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
@@ -103,6 +104,7 @@ python webui.py
     - RTMW for 133 keypoints
     - DWPose for 133 keypoints
     - RTMO for one-stage pose estimation (17 keypoints)
+    - RTMW3D for 133 keypoints
 - Visualization
   - [draw_bbox](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L9)
   - [draw_skeleton](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L16)
