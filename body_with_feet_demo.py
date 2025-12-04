@@ -40,11 +40,11 @@ while cap.isOpened():
                              line_width=3)
 
     img_show = cv2.resize(img_show, (960, 640))
-    while True:
-        cv2.imshow('Body and Feet Pose Estimation', img_show)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'): # Press 'q' to exit
-            break
+
+    cv2.imshow('Body and Feet Pose Estimation', img_show)
+    
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
 cap.release()
 cv2.destroyAllWindows()
