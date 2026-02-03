@@ -4,18 +4,14 @@ Example:
 import cv2
 from functools import partial
 from rtmlib import PoseTracker, Wholebody, Custom, draw_skeleton
-from functools import partial
-from rtmlib import PoseTracker, Wholebody, Custom, draw_skeleton
 
 device = 'cuda'
 backend = 'onnxruntime'  # opencv, onnxruntime
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
 cap = cv2.VideoCapture('./demo.mp4')
 
-pose_tracker = PoseTracker(Wholebody,
 pose_tracker = PoseTracker(Wholebody,
                         det_frequency=10,  # detect every 10 frames
                         to_openpose=openpose_skeleton,
@@ -42,34 +38,7 @@ pose_tracker = PoseTracker(Wholebody,
 #             pose_input_size=(192, 256),
 #             backend=backend,
 #             device=device)
-# # then
-# pose_tracker = PoseTracker(custom,
-#                         det_frequency=10,
-#                         to_openpose=openpose_skeleton,
-#                         backend=backend, device=device)
-
-
-
-# # Initialized slightly differently for Custom solution:
-# custom = partial(Custom,
-#                 to_openpose=openpose_skeleton,
-#                 pose_class='RTMO',
-#                 pose='https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip', # noqa
-#                 pose_input_size=(640,640),
-#                 backend=backend,
-#                 device=device)
-# # or
-# custom = partial(
-#             Custom,
-#             to_openpose=openpose_skeleton,
-#             det_class='YOLOX',
-#             det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip', # noqa
-#             det_input_size=(640, 640),
-#             pose_class='RTMPose',
-#             pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip', # noqa
-#             pose_input_size=(192, 256),
-#             backend=backend,
-#             device=device)
+#
 # # then
 # pose_tracker = PoseTracker(custom,
 #                         det_frequency=10,
