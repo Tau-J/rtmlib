@@ -12,7 +12,7 @@ cap = cv2.VideoCapture('./demo.mp4')
 
 openpose_skeleton = False  # True for openpose-style, False for mmpose-style
 
-# Example: BodyWithFeet in balanced mode
+# Example: RTMPose BodyWithFeet in balanced mode
 custom = Custom(to_openpose=openpose_skeleton,
                 det_class='YOLOX',
                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip', # noqa
@@ -22,6 +22,17 @@ custom = Custom(to_openpose=openpose_skeleton,
                 pose_input_size=(192, 256),
                 backend=backend,
                 device=device)
+
+# # Example: ViTPose BodyWithFeet in balanced mode
+# custom = Custom(to_openpose=openpose_skeleton,
+#                 det_class='YOLOX',
+#                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip', # noqa
+#                 det_input_size=(640, 640),
+#                 pose_class='ViTPose',
+#                 pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx', # noqa
+#                 pose_input_size=(192, 256),
+#                 backend=backend,
+#                 device=device)
 
 # # Example: RTMO in balanced mode
 # custom = Custom(to_openpose=openpose_skeleton,

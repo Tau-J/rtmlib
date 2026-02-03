@@ -2,7 +2,7 @@
 
 ![demo](https://github.com/Tau-J/rtmlib/assets/13503330/b7e8ce8b-3134-43cf-bba6-d81656897289)
 
-rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
+rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://github.com/ViTAE-Transformer/ViTPose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
 
 Basically, rtmlib only requires these dependencies:
 
@@ -105,6 +105,10 @@ python webui.py
     - DWPose for 133 keypoints
     - RTMO for one-stage pose estimation (17 keypoints)
     - RTMW3D for 133 keypoints
+  - [ViTPose](/rtmlib/tools/pose_estimation/vitpose.py)
+    - ViTPose for 17 keypoints
+    - ViTPose for 25 keypoints
+    - ViTPose for 133 keypoints
 - Visualization
   - [draw_bbox](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L9)
   - [draw_skeleton](https://github.com/Tau-J/rtmlib/blob/adc69a850f59ba962d81a88cffd3f48cfc5fd1ae/rtmlib/draw.py#L16)
@@ -113,11 +117,13 @@ For high-level APIs (`Solution`), you can choose to pass `mode` or `det`+`pose` 
 
 ```Python
 # By mode
+from rtmlib import Wholebody
 wholebody = Wholebody(mode='performance',  # 'performance', 'lightweight', 'balanced'. Default: 'balanced'
                       backend=backend,
                       device=device)
 
 # By det and pose
+from rtmlib import Body
 body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',
             det_input_size=(640, 640),
             pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip',
@@ -126,6 +132,18 @@ body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onn
             device=device)
 
 # By det and pose with custom classes
+from rtmlib import Custom
+# Using ViTPose
+custom = Custom(det_class='YOLOX',
+               det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.ip',
+               det_input_size=(640, 640),
+               pose_class='ViTPose',
+               pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-b-coco_25.onnx',
+               pose_input_size=(192, 256),
+               backend=backend,
+               device=device)
+
+# Detecting hands
 custom = Custom(det_class='RTMDet',
                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip',
                 det_input_size=(320,320),
@@ -139,12 +157,11 @@ custom = Custom(det_class='RTMDet',
 For low-level APIs (`Model`), you can specify the model you want to use by passing the `onnx_model` argument.
 
 ```Python
-# By onnx_model (.onnx)
-pose_model = RTMPose(onnx_model='/path/to/your_model.onnx',  # download link or local path
+# By onnx_model (.onnx or .zip)
+pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',  # download link or local path
                      backend=backend, device=device)
 
-# By onnx_model (.zip)
-pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',  # download link or local path
+pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx',  
                      backend=backend, device=device)
 ```
 
@@ -152,7 +169,7 @@ pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projec
 
 By defaults, rtmlib will automatically download and apply models with the best performance.
 
-More models can be found in [RTMPose Model Zoo](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose).
+More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos, for hand and animal detection for example.
 
 ### Detectors
 
@@ -192,6 +209,21 @@ Notes:
 |           [RTMO-s](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.zip)           |  640x640   |   68.6    | trained on 7 datasets |
 |          [RTMO-m](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip)           |  640x640   |   72.6    | trained on 7 datasets |
 |          [RTMO-l](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip)           |  640x640   |   74.8    | trained on 7 datasets |
+|          [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-s-coco.onnx)           |  256x192   |   -    | trained on - |
+|          [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-b-coco.onnx)           |  256x192   |   -    | trained on - |
+|          [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-l-coco.onnx)           |  256x192   |   -    | trained on - |
+
+</details>
+
+
+<details open>
+<summary><b>Body 25 Keypoints</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | AP (COCO) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-s-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
+| [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-b-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
+| [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
 
 </details>
 
@@ -224,6 +256,10 @@ Notes:
 |          [RTMW-l](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.zip)          |  256x192   | 66.0 |     trained on 14 datasets      |
 |          [RTMW-l](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.zip)          |  384x288   | 70.1 |     trained on 14 datasets      |
 |   [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip)    |  384x288   | 70.2 |     trained on 14 datasets      |
+| [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-s-wholebody.onnx) |  256x192   | - | trained on - |
+| [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-b-wholebody.onnx) |  256x192   | - | trained on - |
+| [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx) |  256x192   | - | trained on - |
+
 
 </details>
 
@@ -275,6 +311,15 @@ Notes:
       primaryClass={cs.CV},
       url={https://arxiv.org/abs/2407.08634}, 
 }
+
+@article{xu2022vitpose,
+      title={Vitpose: Simple vision transformer baselines for human pose estimation},
+      author={Xu, Yufei and Zhang, Jing and Zhang, Qiming and Tao, Dacheng},
+      journal={Advances in neural information processing systems},
+      volume={35},
+      pages={38571--38584},
+      year={2022}
+}
 ```
 
 ## Acknowledgement
@@ -284,3 +329,4 @@ Our code is based on these repos:
 - [MMPose](https://github.com/open-mmlab/mmpose)
 - [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose)
 - [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)
+- [ViTPose](https://github.com/ViTAE-Transformer/ViTPose)
