@@ -17,7 +17,7 @@ pose_tracker = PoseTracker(Wholebody,
                         to_openpose=openpose_skeleton,
                         backend=backend, device=device)
 
-                        
+
 # # Initialized slightly differently for Custom solution:
 # custom = partial(Custom,
 #                 to_openpose=openpose_skeleton,
@@ -38,7 +38,6 @@ pose_tracker = PoseTracker(Wholebody,
 #             pose_input_size=(192, 256),
 #             backend=backend,
 #             device=device)
-#
 # # then
 # pose_tracker = PoseTracker(custom,
 #                         det_frequency=10,
@@ -176,15 +175,6 @@ class PoseTracker:
 
     def __call__(self, image: np.ndarray):
 
-        if self.det_model is not None:
-            if self.frame_cnt % self.det_frequency == 0:
-                bboxes = self.det_model(image)
-            else:
-                bboxes = self.bboxes_last_frame
-            keypoints, scores = self.pose_model(image, bboxes=bboxes)
-        else:  # rtmo
-            keypoints, scores = self.pose_model(image)
-            
         pose_model_name = type(self.pose_model).__name__
 
         if self.det_model is not None:
@@ -232,10 +222,6 @@ class PoseTracker:
                     bboxes_current_frame.append(bbox)
 
             self.track_ids_last_frame = track_ids_current_frame
-            # reorder keypoints, scores according to track_id
-            keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
-            scores = np.array([scores[i] for i in self.track_ids_last_frame])
-
             # reorder keypoints, scores according to track_id
             keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
             scores = np.array([scores[i] for i in self.track_ids_last_frame])
