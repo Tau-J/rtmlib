@@ -87,6 +87,7 @@ class Custom:
                  det_class: str = None,
                  det: str = None,
                  det_input_size: tuple = (640, 640),
+                 det_categories: list = None,
                  pose_class: str = None,
                  pose: str = None,
                  pose_input_size: tuple = (192, 256),
@@ -102,6 +103,7 @@ class Custom:
                                     model_input_size=det_input_size,
                                     backend=backend,
                                     device=device)
+                self.det_categories = det_categories
                 self.one_stage = False
 
             except ImportError:
@@ -124,7 +126,11 @@ class Custom:
         if self.one_stage:
             keypoints, scores = self.pose_model(image)
         else:
-            bboxes = self.det_model(image)
+            if self.det_categories is not None:
+                bboxes, classes = self.det_model(image)
+                bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+            else:
+                bboxes = self.det_model(image)
             keypoints, scores = self.pose_model(image, bboxes=bboxes)
 
         return keypoints, scores

@@ -23,7 +23,9 @@ def draw_skeleton(img,
     num_keypoints = keypoints.shape[1]
 
     if openpose_skeleton:
-        if num_keypoints == 18:
+        if num_keypoints == 17:
+            skeleton = 'animal17'
+        elif num_keypoints == 18:
             skeleton = 'openpose18'
         elif num_keypoints == 134:
             skeleton = 'openpose134'
@@ -58,7 +60,7 @@ def draw_skeleton(img,
         for i in range(num_instance):
             img = draw_mmpose(img, keypoints[i], scores[i], keypoint_info,
                               skeleton_info, kpt_thr, radius, line_width)
-    elif skeleton in ['openpose18', 'openpose134']:
+    elif skeleton in ['openpose18', 'openpose134', 'animal17']:
         for i in range(num_instance):
             img = draw_openpose(img,
                                 keypoints[i],
