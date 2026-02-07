@@ -2,7 +2,7 @@
 
 ![demo](https://github.com/Tau-J/rtmlib/assets/13503330/b7e8ce8b-3134-43cf-bba6-d81656897289)
 
-rtmlib is a super lightweight library to conduct pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://github.com/ViTAE-Transformer/ViTPose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
+`rtmlib` is a super lightweight library to conduct human and animal pose estimation based on [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://github.com/ViTAE-Transformer/ViTPose) models **WITHOUT** any dependencies like mmcv, mmpose, mmdet, etc.
 
 Basically, rtmlib only requires these dependencies:
 
@@ -14,6 +14,20 @@ Basically, rtmlib only requires these dependencies:
 Optionally, you can use other common backends like opencv, onnxruntime, openvino, tensorrt to accelerate the inference process.
 
 - For openvino users, please add the path `<your python path>\envs\<your env name>\Lib\site-packages\openvino\libs` into your environment path.
+
+## Contents
+1. [Installation](#installation)
+2. [Quick Start](#quick-start)
+3. [Usage](#usage)
+   1. [WebUI](#webui)
+   2. [APIs](#apis)
+4. [Model Zoo](#model-zoo)
+   1. [Detectors](#detectors)
+   2. [Pose Estimators](#pose-estimators)
+   3. [Visualization](#visualization)
+5. [Additional Resources](#additional-resources)
+   1. [Citation](#citation)
+   2. [Acknowledgement](#acknowledgement)
 
 ## Installation
 
@@ -52,7 +66,7 @@ device = 'cpu'  # cpu, cuda, mps
 backend = 'onnxruntime'  # opencv, onnxruntime, openvino
 img = cv2.imread('./demo.jpg')
 
-openpose_skeleton = False  # True for openpose-style, False for mmpose-style
+openpose_skeleton = False  # True for openpose-style (required for animals), False for mmpose-style
 
 wholebody = Wholebody(to_openpose=openpose_skeleton,
                       mode='balanced',  # 'performance', 'lightweight', 'balanced'. Default: 'balanced'
@@ -72,7 +86,9 @@ cv2.imshow('img', img_show)
 cv2.waitKey()
 ```
 
-## WebUI
+## Usage
+
+### WebUI
 
 Run `webui.py`:
 
@@ -85,7 +101,7 @@ python webui.py
 
 ![image](https://github.com/Tau-J/rtmlib/assets/13503330/49ef11a1-a1b5-4a20-a2e1-d49f8be6a25d)
 
-## APIs
+### APIs
 
 - Solutions (High-level APIs)
   - [Wholebody](/rtmlib/tools/solution/wholebody.py)
@@ -95,18 +111,22 @@ python webui.py
   - [Custom](/rtmlib/tools/solution/custom.py)
   - [PoseTracker](/rtmlib/tools/solution/pose_tracker.py)
   - [Wholebody3d](/rtmlib/tools/solution/wholebody3d.py)
-- Models (Low-level APIs)
+- Detectors (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
+  - [YOLOX_multiclass](/rtmlib/tools/object_detection/yolox_multiclass.py)
+- Pose Estimators (Low-level APIs)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
     - RTMPose for 17 keypoints
+    - RTMO for 17 keypoints (**one-stage**)
+    - RTMPose for 21 keypoints (**hand**)
     - RTMPose for 26 keypoints
     - RTMW for 133 keypoints
     - DWPose for 133 keypoints
-    - RTMO for one-stage pose estimation (17 keypoints)
-    - RTMW3D for 133 keypoints
+    - RTMW3D for 133 keypoints (**3D**)
   - [ViTPose](/rtmlib/tools/pose_estimation/vitpose.py)
     - ViTPose for 17 keypoints
+    - ViTPose for 17 keypoints (**animal**)
     - ViTPose for 25 keypoints
     - ViTPose for 133 keypoints
 - Visualization
@@ -133,7 +153,7 @@ body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onn
 
 # By det and pose with custom classes
 from rtmlib import Custom
-# Using ViTPose
+# Human pose estimation using YOLOX and ViTPose
 custom = Custom(det_class='YOLOX',
                det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.ip',
                det_input_size=(640, 640),
@@ -143,7 +163,8 @@ custom = Custom(det_class='YOLOX',
                backend=backend,
                device=device)
 
-# Detecting hands
+# Hand pose estimation using RTMDet and RTMPose
+
 custom = Custom(det_class='RTMDet',
                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip',
                 det_input_size=(320,320),
@@ -152,15 +173,38 @@ custom = Custom(det_class='RTMDet',
                 pose_input_size=(256, 256),
                 backend=backend,
                 device=device)
+
+# Multiclass pose estimation using YOLOX_multiclass and ViTPose
+CLASSES = [0, 23] # person, giraffe
+# Requires openpose_skeleton = True in draw_skeleton for visualization
+custom = Custom(det_class='YOLOX_multiclass',
+               det='https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
+               det_input_size=(640, 640),
+               det_categories=CLASSES,
+               pose_class='ViTPose',
+               pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',
+               pose_input_size=(192, 256),
+               backend=backend,
+               device=device)
 ```
 
 For low-level APIs (`Model`), you can specify the model you want to use by passing the `onnx_model` argument.
 
 ```Python
-# By onnx_model (.onnx or .zip)
-pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',  # download link or local path
+# By onnx_model (.onnx or .zip) by download link or local path
+# YOLOX human detector
+det_model = YOLOX(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip', 
                      backend=backend, device=device)
 
+# YOLOX multiclass detector
+det_model = YOLOX_multiclass('https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
+                     backend=backend, device=device)
+
+# RTMPose pose estimator
+pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',local path
+                     backend=backend, device=device)
+
+# ViTPose pose estimator
 pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx',  
                      backend=backend, device=device)
 ```
@@ -169,7 +213,7 @@ pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/r
 
 By defaults, rtmlib will automatically download and apply models with the best performance.
 
-More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos, for hand and animal detection for example.
+More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos for pose estimation, and [YOLOX_multiclass](https://github.com/Megvii-BaseDetection/YOLOX/tree/main/demo/ONNXRuntime) for multiclass detection.
 
 ### Detectors
 
@@ -193,6 +237,40 @@ Notes:
 
 </details>
 
+<details open>
+<summary><b>Hand</b></summary>
+
+|                                                          ONNX Model                                                           | Input Size | AP (hand) |       Description        |
+| :---------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------: | :----------------------: |
+|                 [RTMDet-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip)                 |  320x320   |      76.0      |     trained on 5 datasets      |
+
+<details open>
+<summary><b>Multi-class</b></summary>
+
+```
+COCO_CLASSES = [
+    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
+    'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
+    'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',
+    'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',
+    'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+    'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+    'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 
+    'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 
+    'scissors', 'teddy bear', 'hair drier', 'toothbrush']
+```
+
+|                                                          ONNX Model                                                           | Input Size | AP (COCO classes) |       Description        |
+| :---------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------: | :----------------------: |
+|  [YOLOX-nano](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx) |  416x416 | 25.8 | trained on coco |
+|  [YOLOX-t](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx) |  416x416 | 32.8 | trained on coco |
+|  [YOLOX-s](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx) |  640x640 | 40.5 | trained on coco |
+|  [YOLOX-m](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx) |  640x640 | 47.2 | trained on coco |
+|  [YOLOX-l](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_l.onnx) |  640x640 | 50.1 | trained on coco |
+|  [YOLOX-Darknet53](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_darknet.onnx) |  640x640 | 48.0 | trained on coco |
+|  [YOLOX-X](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_x.onnx) |  640x640 | 51.5 | trained on coco |
+
+
 ### Pose Estimators
 
 <details open>
@@ -209,9 +287,9 @@ Notes:
 |           [RTMO-s](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.zip)           |  640x640   |   68.6    | trained on 7 datasets |
 |          [RTMO-m](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip)           |  640x640   |   72.6    | trained on 7 datasets |
 |          [RTMO-l](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip)           |  640x640   |   74.8    | trained on 7 datasets |
-|          [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-s-coco.onnx)           |  256x192   |   -    | trained on - |
-|          [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-b-coco.onnx)           |  256x192   |   -    | trained on - |
-|          [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-l-coco.onnx)           |  256x192   |   -    | trained on - |
+|          [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-s-coco.onnx)           |  256x192   |   75.8    | trained on 6 datasets |
+|          [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-b-coco.onnx)           |  256x192   |   77.0    | trained on 6 datasets |
+|          [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-l-coco.onnx)           |  256x192   |   78.6    | trained on 6 datasets |
 
 </details>
 
@@ -221,24 +299,23 @@ Notes:
 
 |                                                                     ONNX Model                                                                      | Input Size | AP (COCO) |      Description      |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
-| [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-s-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
-| [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-b-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
-| [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx) |  256x192   |   -    | trained on 7 datasets |
+| [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-s-coco_25.onnx) |  256x192   |   -    | fine-tuned on COCO+feet  |
+| [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-b-coco_25.onnx) |  256x192   |   -    | fine-tuned on COCO+feet  |
+| [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx) |  256x192   |   -    | fine-tuned on COCO+feet  |
 
 </details>
+
 
 <details open>
 <summary><b>Body 26 Keypoints</b></summary>
 
-|                                                                     ONNX Model                                                                      | Input Size | AUC (Body8) |      Description      |
+|                                                                     ONNX Model                                                                      | Input Size | AP (Body8) |      Description      |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
-| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.zip) |  256x192   |   66.35    | trained on 7 datasets |
-| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip) |  256x192   |   68.62    | trained on 7 datasets |
-| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip) |  256x192   |   71.91    | trained on 7 datasets |
-| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.zip) |  256x192   |   73.19    | trained on 7 datasets |
-| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-384x288-89e6428b_20230605.zip) |  384x288   |   73.56    | trained on 7 datasets |
-| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-384x288-734182ce_20230605.zip) |  384x288   |   74.38    | trained on 7 datasets |
-| [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip) |  384x288   |   74.82    | trained on 7 datasets |
+| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.zip) |  256x192   |   68.0    | trained on 7 datasets |
+| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip) |  256x192   |   72.0    | trained on 7 datasets |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip) |  256x192   |   76.7    | trained on 7 datasets |
+| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.zip) |  256x192   |   78.4    | trained on 7 datasets |
+| [RTMPose-x*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip) |  384x288   |   80.0    | trained on 7 datasets |
 
 </details>
 
@@ -247,6 +324,9 @@ Notes:
 
 |                                                                     ONNX Model                                                                     | Input Size |   AP (Whole)   |           Description           |
 | :------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--: | :-----------------------------: |
+| [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-s-wholebody.onnx) |  256x192   | 54.4 | trained on 6 datasets |
+| [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-b-wholebody.onnx) |  256x192   | 57.4 | trained on 6 datasets |
+| [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx) |  256x192   | 60.6 | trained on 6 datasets |
 | [DWPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-ucoco_dw-ucoco_270e-256x192-dcf277bf_20230728.zip) |  256x192   | 48.5 | trained on COCO-Wholebody+UBody |
 | [DWPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-ucoco_dw-ucoco_270e-256x192-3fd922c8_20230728.zip) |  256x192   | 53.8 | trained on COCO-Wholebody+UBody |
 | [DWPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-ucoco_dw-ucoco_270e-256x192-c8b76419_20230728.zip) |  256x192   | 60.6 | trained on COCO-Wholebody+UBody |
@@ -254,14 +334,55 @@ Notes:
 | [DWPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-384x288-2438fd99_20230728.zip) |  384x288   | 66.5 | trained on COCO-Wholebody+UBody |
 |          [RTMW-m](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-m-s_simcc-cocktail14_270e-256x192_20231122.zip)          |  256x192   | 58.2 |     trained on 14 datasets      |
 |          [RTMW-l](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.zip)          |  256x192   | 66.0 |     trained on 14 datasets      |
-|          [RTMW-l](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.zip)          |  384x288   | 70.1 |     trained on 14 datasets      |
-|   [RTMW-x](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip)    |  384x288   | 70.2 |     trained on 14 datasets      |
-| [ViTPose-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-s-wholebody.onnx) |  256x192   | - | trained on - |
-| [ViTPose-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-b-wholebody.onnx) |  256x192   | - | trained on - |
-| [ViTPose-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx) |  256x192   | - | trained on - |
+|          [RTMW-l*](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.zip)          |  384x288   | 70.1 |     trained on 14 datasets      |
+|   [RTMW-x*](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip)    |  384x288   | 70.2 |     trained on 14 datasets      |
+
+</details>
+
+<details open>
+<summary><b>WholeBody 133 Keypoints</b></summary>
+
+|                                                                     ONNX Model                                                                     | Input Size |   AP (Whole)   |           Description           |
+| :------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--: | :-----------------------------: |
+|   [RTMW3D-x](https://huggingface.co/Soykaf/RTMW3D-x/resolve/main/onnx/rtmw3d-x_8xb64_cocktail14-384x288-b0a0eab7_20240626.onnx)    |  384x288   |68.0 |     trained on COCO-Wholebody      |
+
+</details>
+
+<details open>
+<summary><b>Hand</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | **AUC** (Hand56) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [RTMPose-m*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-hand5_pt-aic-coco_210e-256x256-74fb594_20230320.zip) |  256x256   |   83.9    | trained on 5 datasets |
 
 
 </details>
+
+<details open>
+<summary><b>Face</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | AP (Face6) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [RTMPose-t*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-face6_pt-in1k_120e-256x256-df79d9a5_20230529.zip) |  256x256   |   -    | trained on 6 datasets |
+| [RTMPose-s*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-face6_pt-in1k_120e-256x256-d779fdef_20230529.zip) |  256x256   |   -    | trained on 6 datasets |
+| [RTMPose-m*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-face6_pt-in1k_120e-256x256-72a37400_20230529.zip) |  256x256   |   -    | trained on 6 datasets |
+
+
+</details>
+
+
+<details open>
+<summary><b>Animal</b></summary>
+
+|                                                                     ONNX Model                                                                      | Input Size | AP (AP10K) |      Description      |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
+| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-ap10k_pt-aic-coco_210e-256x256-7a041aa1_20230206.zip) |  256x256   |   72.2    | trained on AP-10K |
+| [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-s-apt36k.onnx) |  256x192   | 74.2 | trained on 6 datasets |
+| [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx) |  256x192   | 75.9 | trained on 6 datasets |
+| [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-h-apt36k.onnx) |  256x192   | 80.8 | trained on 6 datasets |
+
+</details>
+
 
 ### Visualization
 
@@ -271,6 +392,8 @@ Notes:
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/b12e5f60-fec0-42a1-b7b6-365e93894fb1"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/5acf7431-6ef0-44a8-ae52-9d8c8cb988c9"> |
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/091b8ce3-32d5-463b-9f41-5c683afa7a11"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/4ffc7be1-50d6-44ff-8c6b-22ea8975aad4"> |
 | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/6fddfc14-7519-42eb-a7a4-98bf5441f324"> | <img width="357" alt="result" src="https://github.com/Tau-J/rtmlib/assets/13503330/2523e568-e0c3-4c2e-8e54-d1a67100c537"> |
+
+## Additional resources
 
 ### Citation
 
@@ -322,7 +445,7 @@ Notes:
 }
 ```
 
-## Acknowledgement
+### Acknowledgement
 
 Our code is based on these repos:
 
