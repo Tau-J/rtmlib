@@ -155,7 +155,10 @@ class PoseTracker:
             self.det_model = model.det_model
         except: # rtmo
             self.det_model = None
-        self.det_categories = model.det_categories
+        try:
+            self.det_categories = model.det_categories
+        except:
+            self.det_categories = None
         self.pose_model = model.pose_model
 
         self.det_frequency = det_frequency
