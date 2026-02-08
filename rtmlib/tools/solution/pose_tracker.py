@@ -155,6 +155,7 @@ class PoseTracker:
             self.det_model = model.det_model
         except: # rtmo
             self.det_model = None
+        self.det_categories = model.det_categories
         self.pose_model = model.pose_model
 
         self.det_frequency = det_frequency
@@ -179,7 +180,14 @@ class PoseTracker:
 
         if self.det_model is not None:
             if self.frame_cnt % self.det_frequency == 0:
-                bboxes = self.det_model(image)
+                try:
+                    if self.det_categories is not None:
+                        bboxes, classes = self.det_model(image)
+                        bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                    else:
+                        bboxes = self.det_model(image)
+                except:
+                    return [], []
             else:
                 bboxes = self.bboxes_last_frame
 
@@ -223,8 +231,12 @@ class PoseTracker:
 
             self.track_ids_last_frame = track_ids_current_frame
             # reorder keypoints, scores according to track_id
-            keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
-            scores = np.array([scores[i] for i in self.track_ids_last_frame])
+            try:
+                keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
+                scores = np.array([scores[i] for i in self.track_ids_last_frame])
+            except:
+                # in case track_ids_current_frame is empty
+                return keypoints, scores,
 
         self.bboxes_last_frame = bboxes_current_frame
         self.frame_cnt += 1

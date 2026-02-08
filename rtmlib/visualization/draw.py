@@ -20,6 +20,10 @@ def draw_skeleton(img,
                   kpt_thr=0.5,
                   radius=2,
                   line_width=2):
+    
+    if len(keypoints) == 0:
+        return img
+    
     num_keypoints = keypoints.shape[1]
 
     if openpose_skeleton:
