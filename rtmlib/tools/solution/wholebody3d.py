@@ -1,5 +1,4 @@
-'''
-import time
+"""import time.
 
 import cv2
 
@@ -42,11 +41,12 @@ while cap.isOpened():
 
     cv2.imshow('img', img_show)
     cv2.waitKey(10)
-'''
+"""
 
 import numpy as np
 
 from .. import YOLOX, RTMPose3d
+
 
 class Wholebody3d:
 
@@ -84,13 +84,14 @@ class Wholebody3d:
                                backend=backend,
                                device=device)
         self.pose_model = RTMPose3d(pose,
-                                  model_input_size=pose_input_size,
-                                  to_openpose=to_openpose,
-                                  backend=backend,
-                                  device=device)
+                                    model_input_size=pose_input_size,
+                                    to_openpose=to_openpose,
+                                    backend=backend,
+                                    device=device)
 
     def __call__(self, image: np.ndarray):
         bboxes = self.det_model(image)
-        keypoints, scores, keypoints_simcc, keypoints_2d = self.pose_model(image, bboxes=bboxes)
+        keypoints, scores, keypoints_simcc, keypoints_2d = self.pose_model(
+            image, bboxes=bboxes)
 
         return keypoints, scores, keypoints_simcc, keypoints_2d

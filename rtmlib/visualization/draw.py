@@ -20,10 +20,10 @@ def draw_skeleton(img,
                   kpt_thr=0.5,
                   radius=2,
                   line_width=2):
-    
+
     if len(keypoints) == 0:
         return img
-    
+
     num_keypoints = keypoints.shape[1]
 
     if openpose_skeleton:
@@ -60,7 +60,7 @@ def draw_skeleton(img,
         scores = scores[None, :, :]
 
     num_instance = keypoints.shape[0]
-    if skeleton in ['coco17', 'coco133', 'hand21', 'coco25',  'halpe26']:
+    if skeleton in ['coco17', 'coco133', 'hand21', 'coco25', 'halpe26']:
         for i in range(num_instance):
             img = draw_mmpose(img, keypoints[i], scores[i], keypoint_info,
                               skeleton_info, kpt_thr, radius, line_width)
@@ -187,7 +187,7 @@ def draw_openpose(img,
 
         img = draw_circles(img,
                            kpt,
-                           radius=np.array([j_radius]),
+                           radius=j_radius,
                            face_colors=kpt_color,
                            alpha=transparency)
 

@@ -9,17 +9,22 @@ from .post_processings import multiclass_nms
 
 
 class YOLOX(BaseTool):
-    COCO_CLASSES = [  
-        'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',  
-        'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',  
-        'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',  
-        'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',  
-        'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',  
-        'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',  
-        'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 
-        'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 
-        'scissors', 'teddy bear', 'hair drier', 'toothbrush'  
-    ]  
+    COCO_CLASSES = [
+        'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
+        'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
+        'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
+        'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
+        'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+        'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
+        'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
+        'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+        'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
+        'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
+        'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
+        'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+        'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+    ]
+
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
@@ -30,7 +35,6 @@ class YOLOX(BaseTool):
                  device: str = 'cpu'):
         super().__init__(onnx_model,
                          model_input_size,
-                         mode,
                          backend=backend,
                          device=device)
         self.mode = mode
@@ -63,7 +67,8 @@ class YOLOX(BaseTool):
                     (self.model_input_size[0], self.model_input_size[1], 3),
                     dtype=np.uint8) * 114
             else:
-                padded_img = np.ones(self.model_input_size, dtype=np.uint8) * 114
+                padded_img = np.ones(self.model_input_size,
+                                     dtype=np.uint8) * 114
 
             ratio = min(self.model_input_size[0] / img.shape[0],
                         self.model_input_size[1] / img.shape[1])
@@ -72,7 +77,8 @@ class YOLOX(BaseTool):
                 (int(img.shape[1] * ratio), int(img.shape[0] * ratio)),
                 interpolation=cv2.INTER_LINEAR,
             ).astype(np.uint8)
-            padded_shape = (int(img.shape[0] * ratio), int(img.shape[1] * ratio))
+            padded_shape = (int(img.shape[0] * ratio),
+                            int(img.shape[1] * ratio))
             padded_img[:padded_shape[0], :padded_shape[1]] = resized_img
 
         return padded_img, ratio
@@ -128,9 +134,9 @@ class YOLOX(BaseTool):
             boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.
             boxes_xyxy /= ratio
             dets, keep = multiclass_nms(boxes_xyxy,
-                                  scores,
-                                  nms_thr=self.nms_thr,
-                                  score_thr=self.score_thr)
+                                        scores,
+                                        nms_thr=self.nms_thr,
+                                        score_thr=self.score_thr)
             if dets is not None:
                 pack_dets = (dets[:, :4], dets[:, 4], dets[:, 5])
                 final_boxes, final_scores, final_cls_inds = pack_dets
@@ -138,6 +144,8 @@ class YOLOX(BaseTool):
                 final_boxes = final_boxes[keep]
                 final_scores = final_scores[keep]
                 final_cls_inds = final_cls_inds[keep].astype(int)
+            else:
+                final_boxes, final_cls_inds = np.array([]), np.array([])
 
         elif outputs.shape[-1] == 5:
             # onnx contains nms module
@@ -154,4 +162,6 @@ class YOLOX(BaseTool):
         elif self.mode == 'human':
             return final_boxes
         else:
-            raise NotImplementedError(f'Mode must be \'human\' or \'multiclass\': {self.mode} is not supported.')
+            raise NotImplementedError(
+                f'Mode must be \'human\' or \'multiclass\': {self.mode} is not supported.'
+            )

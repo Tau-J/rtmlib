@@ -6,6 +6,8 @@ import cv2
 import numpy as np
 
 from .file import download_checkpoint
+
+
 def check_mps_support():
     try:
         import onnxruntime
@@ -13,6 +15,7 @@ def check_mps_support():
         return 'MPSExecutionProvider' in providers or 'CoreMLExecutionProvider' in providers
     except ImportError:
         return False
+
 
 RTMLIB_SETTINGS = {
     'opencv': {
@@ -22,12 +25,18 @@ RTMLIB_SETTINGS = {
         'cuda': (cv2.dnn.DNN_BACKEND_CUDA, cv2.dnn.DNN_TARGET_CUDA)
     },
     'onnxruntime': {
-        'cpu': 'CPUExecutionProvider',
-        'cuda': 'CUDAExecutionProvider',
-        'rocm': 'ROCMExecutionProvider',
-        'mps': 'CoreMLExecutionProvider' if check_mps_support() else 'CPUExecutionProvider'
+        'cpu':
+        'CPUExecutionProvider',
+        'cuda':
+        'CUDAExecutionProvider',
+        'rocm':
+        'ROCMExecutionProvider',
+        'mps':
+        'CoreMLExecutionProvider'
+        if check_mps_support() else 'CPUExecutionProvider'
     },
 }
+
 
 class BaseTool(metaclass=ABCMeta):
 
@@ -60,9 +69,10 @@ class BaseTool(metaclass=ABCMeta):
 
         elif backend == 'onnxruntime':
             import onnxruntime as ort
+
             # 'cuda:device_id'
-            if (device not in RTMLIB_SETTINGS[backend]) and ("cuda" in device):
-                device_id = int(device.split(":")[-1])
+            if (device not in RTMLIB_SETTINGS[backend]) and ('cuda' in device):
+                device_id = int(device.split(':')[-1])
                 providers = ('CUDAExecutionProvider', {'device_id': device_id})
             else:
                 providers = RTMLIB_SETTINGS[backend][device]

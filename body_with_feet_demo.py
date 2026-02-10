@@ -1,5 +1,7 @@
 import time
+
 import cv2
+
 from rtmlib import BodyWithFeet, PoseTracker, draw_skeleton
 
 device = 'cpu'
@@ -42,7 +44,7 @@ while cap.isOpened():
     img_show = cv2.resize(img_show, (960, 640))
 
     cv2.imshow('Body and Feet Pose Estimation', img_show)
-    
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 

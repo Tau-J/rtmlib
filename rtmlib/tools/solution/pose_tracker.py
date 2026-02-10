@@ -153,14 +153,14 @@ class PoseTracker:
 
         try:
             self.det_model = model.det_model
-            self.det_mode = model.det_mode
-            if model.det_categories is not None:
+            self.det_mode = self.det_model.mode
+            if hasattr(model, 'det_categories') and model.det_categories:
                 self.det_mode = 'multiclass'
                 self.det_categories = model.det_categories
             else:
                 self.det_categories = None
-
-        except: # rtmo
+        except Exception as e:  # noqa
+            print(f'Warning: {e}, pose tracker will not use detection results')
             self.det_model = None
 
         self.pose_model = model.pose_model
@@ -185,28 +185,32 @@ class PoseTracker:
 
         pose_model_name = type(self.pose_model).__name__
 
-        if self.det_model is not None:
+        if self.det_model:  # top-down algorithm, e.g. rtmpose
             if self.frame_cnt % self.det_frequency == 0:
                 try:
                     if self.det_categories or self.det_mode == 'multiclass':
                         if self.det_categories:
                             bboxes, classes = self.det_model(image)
-                            bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                            bboxes = [
+                                bbox for bbox, cls in zip(bboxes, classes)
+                                if cls in self.det_categories
+                            ]
                         else:
                             bboxes, _ = self.det_model(image)
                     else:
                         bboxes = self.det_model(image)
-                except:
+                except:  # noqa
                     return [], []
             else:
                 bboxes = self.bboxes_last_frame
 
             if pose_model_name == 'RTMPose3d':
-                keypoints, scores, keypoints_simcc, keypoints2d = self.pose_model(image, bboxes=bboxes)
+                keypoints, scores, keypoints_simcc, keypoints2d = self.pose_model(
+                    image, bboxes=bboxes)
             else:
                 keypoints, scores = self.pose_model(image, bboxes=bboxes)
 
-        else:  # rtmo
+        else:  # one-stage algorithm, e.g. rtmo
             keypoints, scores = self.pose_model(image)
 
         if not self.tracking and self.det_frequency != 1:
@@ -220,7 +224,6 @@ class PoseTracker:
                 for kpts in keypoints:
                     bbox = pose_to_bbox(kpts)
                     bboxes_current_frame.append(bbox)
-
 
         else:
             # with tracking
@@ -242,9 +245,11 @@ class PoseTracker:
             self.track_ids_last_frame = track_ids_current_frame
             # reorder keypoints, scores according to track_id
             try:
-                keypoints = np.array([keypoints[i] for i in self.track_ids_last_frame])
-                scores = np.array([scores[i] for i in self.track_ids_last_frame])
-            except:
+                keypoints = np.array(
+                    [keypoints[i] for i in self.track_ids_last_frame])
+                scores = np.array(
+                    [scores[i] for i in self.track_ids_last_frame])
+            except:  # noqa
                 # in case track_ids_current_frame is empty
                 return keypoints, scores,
 
@@ -254,7 +259,7 @@ class PoseTracker:
         if pose_model_name == 'RTMPose3d':
             return keypoints, scores, keypoints_simcc, keypoints2d
 
-        return keypoints, scores,
+        return keypoints, scores
 
     def track_by_iou(self, bbox):
         """Get track id using IoU tracking greedily.

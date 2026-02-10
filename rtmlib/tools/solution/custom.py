@@ -41,7 +41,7 @@ custom = Custom(to_openpose=openpose_skeleton,
 #                 pose_input_size=(640,640),
 #                 backend=backend,
 #                 device=device)
-                      
+
 # # Example: Hand in lightweight mode
 # custom = Custom(to_openpose=openpose_skeleton,
 #                 det_class='RTMDet',
@@ -53,7 +53,7 @@ custom = Custom(to_openpose=openpose_skeleton,
 #                 backend=backend,
 #                 device=device)
 
-# # Example: Human and animal 
+# # Example: Human and animal
 # custom = Custom(to_openpose=openpose_skeleton,
 #                 det_class='YOLOX',
 #                 det_mode='multiclass', # or det_categories=[0,23] for example,
@@ -89,12 +89,15 @@ while cap.isOpened():
     cv2.waitKey(10)
 
 '''
-import numpy as np
 import importlib
-rtmlib_module = importlib.import_module("rtmlib")
+
+import numpy as np
+
+rtmlib_module = importlib.import_module('rtmlib')
 
 
 class Custom:
+
     def __init__(self,
                  det_class: str = None,
                  det: str = None,
@@ -116,10 +119,10 @@ class Custom:
 
                 det_class = getattr(rtmlib_module, det_class)
                 self.det_model = det_class(det,
-                                    model_input_size=det_input_size,
-                                    mode=det_mode,
-                                    backend=backend,
-                                    device=device)
+                                           model_input_size=det_input_size,
+                                           mode=det_mode,
+                                           backend=backend,
+                                           device=device)
                 self.det_mode = det_mode
                 self.det_categories = det_categories
                 self.one_stage = False
@@ -133,10 +136,10 @@ class Custom:
             try:
                 pose_class = getattr(rtmlib_module, pose_class)
                 self.pose_model = pose_class(pose,
-                                    model_input_size=pose_input_size,
-                                    to_openpose=to_openpose,
-                                    backend=backend,
-                                    device=device)
+                                             model_input_size=pose_input_size,
+                                             to_openpose=to_openpose,
+                                             backend=backend,
+                                             device=device)
             except ImportError:
                 raise ImportError(f'{pose_class} is not supported by rtmlib.')
 
@@ -147,7 +150,10 @@ class Custom:
             if self.det_categories or self.det_mode == 'multiclass':
                 if self.det_categories:
                     bboxes, classes = self.det_model(image)
-                    bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                    bboxes = [
+                        bbox for bbox, cls in zip(bboxes, classes)
+                        if cls in self.det_categories
+                    ]
                 else:
                     bboxes, _ = self.det_model(image)
             else:

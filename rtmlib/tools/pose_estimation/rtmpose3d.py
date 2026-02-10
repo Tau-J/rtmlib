@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 import numpy as np
 
@@ -32,7 +32,8 @@ class RTMPose3d(BaseTool):
         for bbox in bboxes:
             img, center, scale = self.preprocess(image, bbox)
             outputs = self.inference(img)
-            kpts, score, kpts_simcc, kpts_2d = self.postprocess(outputs, center, scale)
+            kpts, score, kpts_simcc, kpts_2d = self.postprocess(
+                outputs, center, scale)
             keypoints.append(kpts)
             scores.append(score)
             keypoints_simcc.append(kpts_simcc)
@@ -108,11 +109,11 @@ class RTMPose3d(BaseTool):
         keypoints_simcc = keypoints.copy()
         keypoints_z = keypoints[..., 2:3]
 
-        keypoints[..., 2:3] = (keypoints_z /
-                               (self.model_input_size[-1] / 2) - 1) * self.z_range
+        keypoints[...,
+                  2:3] = (keypoints_z /
+                          (self.model_input_size[-1] / 2) - 1) * self.z_range
 
         keypoints_2d = keypoints[..., :2].copy()
-        keypoints_2d = keypoints_2d / self.model_input_size * scale \
-                + center - 0.5 * scale
+        keypoints_2d = keypoints_2d / self.model_input_size * scale + center - 0.5 * scale
 
         return keypoints, scores, keypoints_simcc, keypoints_2d

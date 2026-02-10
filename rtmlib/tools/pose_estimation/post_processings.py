@@ -1,15 +1,15 @@
 from typing import Tuple
 
-import numpy as np
 import cv2
+import numpy as np
 
 
 def post_dark_udp(coords, batch_heatmaps, kernel=3):
     """DARK post-pocessing. Implemented by udp. Paper ref: Huang et al. The
     Devil is in the Details: Delving into Unbiased Data Processing for Human
     Pose Estimation (CVPR 2020). Zhang et al. Distribution-Aware Coordinate
-    Representation for Human Pose Estimation (CVPR 2020).
-    Code borrowed from easy_ViTPose: https://github.com/JunkyByte/easy_ViTPose
+    Representation for Human Pose Estimation (CVPR 2020). Code borrowed from
+    easy_ViTPose: https://github.com/JunkyByte/easy_ViTPose.
 
     Note:
         - batch size: B
@@ -40,9 +40,9 @@ def post_dark_udp(coords, batch_heatmaps, kernel=3):
     np.clip(batch_heatmaps, 0.001, 50, batch_heatmaps)
     np.log(batch_heatmaps, batch_heatmaps)
 
-    batch_heatmaps_pad = np.pad(
-        batch_heatmaps, ((0, 0), (0, 0), (1, 1), (1, 1)),
-        mode='edge').flatten()
+    batch_heatmaps_pad = np.pad(batch_heatmaps,
+                                ((0, 0), (0, 0), (1, 1), (1, 1)),
+                                mode='edge').flatten()
 
     index = coords[..., 0] + 1 + (coords[..., 1] + 1) * (W + 2)
     index += (W + 2) * (H + 2) * np.arange(0, B * K).reshape(-1, K)
@@ -67,7 +67,7 @@ def post_dark_udp(coords, batch_heatmaps, kernel=3):
     hessian = np.linalg.inv(hessian + np.finfo(np.float32).eps * np.eye(2))
     coords -= np.einsum('ijmn,ijnk->ijmk', hessian, derivative).squeeze()
     return coords
-	
+
 
 def get_simcc_maximum(simcc_x: np.ndarray,
                       simcc_y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -113,9 +113,9 @@ def get_simcc_maximum(simcc_x: np.ndarray,
 
     return locs, vals
 
-def get_simcc_maximum3d(simcc_x: np.ndarray,
-                      simcc_y: np.ndarray,
-                      simcc_z: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+
+def get_simcc_maximum3d(simcc_x: np.ndarray, simcc_y: np.ndarray,
+                        simcc_z: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
 
     Note:

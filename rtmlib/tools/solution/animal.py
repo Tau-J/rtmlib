@@ -78,32 +78,35 @@ class Animal:
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
-            from .. import YOLOX, ViTPose
+        from .. import YOLOX, ViTPose
 
-            if pose is None:
-                pose = self.MODE[mode]['pose']
-                pose_input_size = self.MODE[mode]['pose_input_size']
+        if pose is None:
+            pose = self.MODE[mode]['pose']
+            pose_input_size = self.MODE[mode]['pose_input_size']
 
-            if det is None:
-                det = self.MODE[mode]['det']
-                det_input_size = self.MODE[mode]['det_input_size']
+        if det is None:
+            det = self.MODE[mode]['det']
+            det_input_size = self.MODE[mode]['det_input_size']
 
-            self.det_model = YOLOX(det,
-                                   det_mode='multiclass',
-                                   model_input_size=det_input_size,
-                                   backend=backend,
-                                   device=device)
-            self.det_categories = det_categories
-            self.pose_model = ViTPose(pose,
-                                      model_input_size=pose_input_size,
-                                      to_openpose=False,
-                                      backend=backend,
-                                      device=device)
+        self.det_model = YOLOX(det,
+                               mode='multiclass',
+                               model_input_size=det_input_size,
+                               backend=backend,
+                               device=device)
+        self.det_categories = det_categories
+        self.pose_model = ViTPose(pose,
+                                  model_input_size=pose_input_size,
+                                  to_openpose=False,
+                                  backend=backend,
+                                  device=device)
 
     def __call__(self, image: np.ndarray):
         if self.det_categories:
             bboxes, classes = self.det_model(image)
-            bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+            bboxes = [
+                bbox for bbox, cls in zip(bboxes, classes)
+                if cls in self.det_categories
+            ]
         else:
             bboxes, _ = self.det_model(image)
         keypoints, scores = self.pose_model(image, bboxes=bboxes)

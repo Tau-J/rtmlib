@@ -71,13 +71,12 @@ class ViTPose(BaseTool):
 
         return resized_img, center, scale
 
-    def postprocess(
-            self,
-            outputs: List[np.ndarray],
-            center: Tuple[int, int],
-            scale: Tuple[int, int],
-            score_threshold: float = 0.0,
-            dark_kernel: int = 11) -> Tuple[np.ndarray, np.ndarray]:
+    def postprocess(self,
+                    outputs: List[np.ndarray],
+                    center: Tuple[int, int],
+                    scale: Tuple[int, int],
+                    score_threshold: float = 0.0,
+                    dark_kernel: int = 11) -> Tuple[np.ndarray, np.ndarray]:
         """Postprocess for ViTPose model output.
 
         Args:
@@ -95,21 +94,22 @@ class ViTPose(BaseTool):
         # extract heatmaps
         heatmaps = outputs[0]
         N, K, H, W = heatmaps.shape
-        
+
         # get initial keypoints and scores from heatmaps
         heatmaps_reshaped = heatmaps.reshape((N, K, -1))
         idx = np.argmax(heatmaps_reshaped, 2).reshape((N, K, 1))
         scores = np.max(heatmaps_reshaped, 2).reshape((N, K, 1))
-        
+
         # convert flattened indices to 2D coordinates
         keypoints = np.tile(idx, (1, 1, 2)).astype(np.float32)
         keypoints[..., 0] = keypoints[..., 0] % W
         keypoints[..., 1] = keypoints[..., 1] // W
-        
+
         # filter low-confidence keypoints
-        keypoints = np.where(np.tile(scores, (1, 1, 2)) > score_threshold, keypoints, -1)
-        
-        # apply DARK post-processing for sub-pixel accuracy 
+        keypoints = np.where(
+            np.tile(scores, (1, 1, 2)) > score_threshold, keypoints, -1)
+
+        # apply DARK post-processing for sub-pixel accuracy
         keypoints = post_dark_udp(keypoints, heatmaps, kernel=dark_kernel)
 
         # rescale keypoints
@@ -119,4 +119,3 @@ class ViTPose(BaseTool):
         scores = np.squeeze(scores, axis=2)
 
         return keypoints, scores
-   

@@ -42,29 +42,38 @@ while cap.isOpened():
 
 import numpy as np
 
+
 class BodyWithFeet:
-    """
-    BodyWithFeet class for human pose estimation using the Halpe26 keypoint format.
-    This class supports different modes of operation and can output in OpenPose format.
+    """BodyWithFeet class for human pose estimation using the Halpe26 keypoint
+    format.
+
+    This class supports different modes of operation and can output in OpenPose
+    format.
     """
 
     MODE = {
         'performance': {
-            'det': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
             'det_input_size': (640, 640),
-            'pose': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip',
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip',  # noqa
             'pose_input_size': (288, 384),
         },
         'lightweight': {
-            'det': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip',
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip',  # noqa
             'det_input_size': (416, 416),
-            'pose': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip',
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip',  # noqa
             'pose_input_size': (192, 256),
         },
         'balanced': {
-            'det': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',
+            'det':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
             'det_input_size': (640, 640),
-            'pose': 'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip',
+            'pose':
+            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip',  # noqa
             'pose_input_size': (192, 256),
         }
     }
@@ -78,8 +87,7 @@ class BodyWithFeet:
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
-        """
-        Initialize the Halpe26 pose estimation model.
+        """Initialize the Halpe26 pose estimation model.
 
         Args:
             det (str, optional): Path to detection model. If None, uses default based on mode.
@@ -112,8 +120,7 @@ class BodyWithFeet:
                                   device=device)
 
     def __call__(self, image: np.ndarray):
-        """
-        Perform pose estimation on the input image.
+        """Perform pose estimation on the input image.
 
         Args:
             image (np.ndarray): Input image for pose estimation.
