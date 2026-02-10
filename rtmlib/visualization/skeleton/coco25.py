@@ -1,4 +1,4 @@
-coco25 = dict(name='coco17',
+coco25 = dict(name='coco25',
      keypoint_info={
           0: dict(name='nose', id=0, color=[51, 153, 255], swap=''),
           1: dict(name='left_eye', id=1, color=[51, 153, 255], type='upper', swap='right_eye'),
