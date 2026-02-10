@@ -1,6 +1,6 @@
 [project]
 name = "rtmlib"
-version = "0.0.14"
+version = "0.0.15"
 description = "RTMPose series (RTMPose, DWPose, RTMO, RTMW, VitPose) without mmcv, mmpose, mmdet etc."
 readme = "README.md"
 requires-python = ">=3.10"
