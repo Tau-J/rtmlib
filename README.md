@@ -152,12 +152,12 @@ python webui.py
   - [Body](/rtmlib/tools/solution/body.py)
   - [Body_with_feet](/rtmlib/tools/solution/body_with_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
+  - [Animal](/rtmlib/tools/solution/animal.py)
   - [Custom](/rtmlib/tools/solution/custom.py)
   - [Wholebody3d](/rtmlib/tools/solution/wholebody3d.py)
 - Detectors (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
-  - [YOLOX_multiclass](/rtmlib/tools/object_detection/yolox_multiclass.py)
 - Pose Estimators (Low-level APIs)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
     - RTMPose for 17 keypoints
@@ -197,34 +197,22 @@ body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onn
 
 # By det and pose with custom classes
 from rtmlib import Custom
-# Human pose estimation using YOLOX and ViTPose
+# Human pose estimation using YOLOX and RTMPose
 custom = Custom(det_class='YOLOX',
                det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.ip',
                det_input_size=(640, 640),
-               pose_class='ViTPose',
-               pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-b-coco_25.onnx',
+               pose_class='RTMPose',
+               pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',
                pose_input_size=(192, 256),
                backend=backend,
                device=device)
 
-# Hand pose estimation using RTMDet and RTMPose
-custom = Custom(det_class='RTMDet',
-                det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip',
-                det_input_size=(320,320),
-                pose_class='RTMPose',
-                pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-hand5_pt-aic-coco_210e-256x256-74fb594_20230320.zip',
-                pose_input_size=(256, 256),
-                backend=backend,
-                device=device)
-
-# Multiclass pose estimation using YOLOX_multiclass and ViTPose
-CLASSES = [0, 23] # person, giraffe
+# Human and animal pose estimation using YOLOX in multiclass mode and ViTPose
 # Requires openpose_skeleton = True in draw_skeleton for visualization
-custom = Custom(det_class='YOLOX_multiclass',
+custom = Custom(det_class='YOLOX',
+               det_mode='multiclass', # or det_categories=[0,23] (for example)
                det='https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
                det_input_size=(640, 640),
-               det_categories=CLASSES,
-               pose_class='ViTPose',
                pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',
                pose_input_size=(192, 256),
                backend=backend,
@@ -240,7 +228,8 @@ det_model = YOLOX(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/
                      backend=backend, device=device)
 
 # YOLOX multiclass detector
-det_model = YOLOX_multiclass('https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
+det_model = YOLOX('https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx', 
+                     det_mode='multiclass', # or det_categories=[0,1,etc] if you want specific COCO_CLASSES IDs
                      backend=backend, device=device)
 
 # RTMPose pose estimator
@@ -257,7 +246,7 @@ pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/r
 
 By defaults, rtmlib will automatically download and apply models with the best performance.
 
-More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos for pose estimation, and [YOLOX_multiclass](https://github.com/Megvii-BaseDetection/YOLOX/tree/main/demo/ONNXRuntime) for multiclass detection.
+More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos for pose estimation, and [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX/tree/main/demo/ONNXRuntime) for multiclass detection.
 
 ### Detectors
 

@@ -53,6 +53,18 @@ custom = Custom(to_openpose=openpose_skeleton,
 #                 backend=backend,
 #                 device=device)
 
+# # Example: Human and animal 
+# custom = Custom(to_openpose=openpose_skeleton,
+#                 det_class='YOLOX',
+#                 det_mode='multiclass', # or det_categories=[0,23] for example,
+#                 det='https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
+#                 det_input_size=(640,640),
+#                 pose_class='ViTPose',
+#                 pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',
+#                 pose_input_size=(192, 256),
+#                 backend=backend,
+#                 device=device)
+
 frame_idx = 0
 
 while cap.isOpened():
@@ -87,6 +99,7 @@ class Custom:
                  det_class: str = None,
                  det: str = None,
                  det_input_size: tuple = (640, 640),
+                 det_mode: str = 'human',
                  det_categories: list = None,
                  pose_class: str = None,
                  pose: str = None,
@@ -98,11 +111,16 @@ class Custom:
 
         if det_class is not None:
             try:
+                if det_categories is not None:
+                    det_mode = 'multiclass'
+
                 det_class = getattr(rtmlib_module, det_class)
                 self.det_model = det_class(det,
                                     model_input_size=det_input_size,
+                                    mode=det_mode,
                                     backend=backend,
                                     device=device)
+                self.det_mode = det_mode
                 self.det_categories = det_categories
                 self.one_stage = False
 
@@ -126,9 +144,12 @@ class Custom:
         if self.one_stage:
             keypoints, scores = self.pose_model(image)
         else:
-            if self.det_categories is not None:
-                bboxes, classes = self.det_model(image)
-                bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+            if self.det_categories or self.det_mode == 'multiclass':
+                if self.det_categories:
+                    bboxes, classes = self.det_model(image)
+                    bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                else:
+                    bboxes, _ = self.det_model(image)
             else:
                 bboxes = self.det_model(image)
             keypoints, scores = self.pose_model(image, bboxes=bboxes)

@@ -9,18 +9,31 @@ from .post_processings import multiclass_nms
 
 
 class YOLOX(BaseTool):
-
+    COCO_CLASSES = [  
+        'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',  
+        'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',  
+        'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee',  
+        'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard',  
+        'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',  
+        'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',  
+        'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 
+        'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 
+        'scissors', 'teddy bear', 'hair drier', 'toothbrush'  
+    ]  
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
+                 det_mode: str = 'human',
                  nms_thr=0.45,
                  score_thr=0.7,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model,
                          model_input_size,
+                         det_mode,
                          backend=backend,
                          device=device)
+        self.det_mode = det_mode
         self.nms_thr = nms_thr
         self.score_thr = score_thr
 
@@ -31,7 +44,7 @@ class YOLOX(BaseTool):
         return results
 
     def preprocess(self, img: np.ndarray):
-        """Do preprocessing for RTMPose model inference.
+        """Do preprocessing for YOLOX model inference.
 
         Args:
             img (np.ndarray): Input image in shape.
@@ -69,19 +82,20 @@ class YOLOX(BaseTool):
         outputs: List[np.ndarray],
         ratio: float = 1.,
     ) -> Tuple[np.ndarray, np.ndarray]:
-        """Do postprocessing for RTMPose model inference.
+        """Do postprocessing for YOLOX model inference.
 
         Args:
-            outputs (List[np.ndarray]): Outputs of RTMPose model.
+            outputs (List[np.ndarray]): Outputs of YOLOX model.
             ratio (float): Ratio of preprocessing.
 
         Returns:
             tuple:
             - final_boxes (np.ndarray): Final bounding boxes.
-            - final_scores (np.ndarray): Final scores.
+            - final_cls_inds (np.ndarray): Final class IDs.
+            - NOT returned: final_scores (np.ndarray): Final scores.
         """
 
-        if outputs.shape[-1] == 4:
+        if outputs.shape[-1] == 4 or outputs.shape[-1] > 5:
             # onnx without nms module
 
             grids = []
@@ -120,10 +134,10 @@ class YOLOX(BaseTool):
             if dets is not None:
                 pack_dets = (dets[:, :4], dets[:, 4], dets[:, 5])
                 final_boxes, final_scores, final_cls_inds = pack_dets
-                isscore = final_scores > 0.3
-                iscat = final_cls_inds == 0
-                isbbox = [i and j for (i, j) in zip(isscore, iscat)]
-                final_boxes = final_boxes[isbbox]
+                keep = final_scores > self.nms_thr
+                final_boxes = final_boxes[keep]
+                final_scores = final_scores[keep]
+                final_cls_inds = final_cls_inds[keep].astype(int)
 
         elif outputs.shape[-1] == 5:
             # onnx contains nms module
@@ -135,4 +149,9 @@ class YOLOX(BaseTool):
             isbbox = [i for i in isscore]
             final_boxes = final_boxes[isbbox]
 
-        return final_boxes
+        if self.det_mode == 'multiclass':
+            return final_boxes, final_cls_inds
+        elif self.det_mode == 'human':
+            return final_boxes
+        else:
+            raise NotImplementedError(f'det_mode must be \'human\' or \'multiclass\': {self.det_mode} is not supported.')

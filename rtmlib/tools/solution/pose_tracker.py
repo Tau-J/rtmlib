@@ -153,12 +153,16 @@ class PoseTracker:
 
         try:
             self.det_model = model.det_model
+            self.det_mode = model.det_mode
+            if model.det_categories is not None:
+                self.det_mode = 'multiclass'
+                self.det_categories = model.det_categories
+            else:
+                self.det_categories = None
+
         except: # rtmo
             self.det_model = None
-        try:
-            self.det_categories = model.det_categories
-        except:
-            self.det_categories = None
+
         self.pose_model = model.pose_model
 
         self.det_frequency = det_frequency
@@ -184,9 +188,12 @@ class PoseTracker:
         if self.det_model is not None:
             if self.frame_cnt % self.det_frequency == 0:
                 try:
-                    if self.det_categories is not None:
-                        bboxes, classes = self.det_model(image)
-                        bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                    if self.det_categories or self.det_mode == 'multiclass':
+                        if self.det_categories:
+                            bboxes, classes = self.det_model(image)
+                            bboxes = [bbox for bbox, cls in zip(bboxes, classes) if cls in self.det_categories]
+                        else:
+                            bboxes, _ = self.det_model(image)
                     else:
                         bboxes = self.det_model(image)
                 except:
