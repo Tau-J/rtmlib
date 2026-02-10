@@ -74,9 +74,9 @@ keypoints, scores = wholebody(img)
 
 # visualize
 # if you want to use black background instead of original image,
-# img_show = np.zeros(img_show.shape, dtype=np.uint8)
-img_show = draw_skeleton(img_show, keypoints, scores, kpt_thr=0.5)
-cv2.imshow('img', img_show)
+# img = np.zeros(img.shape, dtype=np.uint8)
+img = draw_skeleton(img, keypoints, scores, kpt_thr=0.5, to_openpose=openpose_skeleton)
+cv2.imshow('img', img)
 cv2.waitKey(0)
 ```
 
@@ -98,6 +98,7 @@ pose_tracker = PoseTracker(Body,
                         to_openpose=False)
 
 # # Or with a custom class
+# from functools import partial
 # custom = partial(Custom,
 #                 det_class='YOLOX',
 #                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',
@@ -152,11 +153,11 @@ python webui.py
   - [Body](/rtmlib/tools/solution/body.py)
   - [Body_with_feet](/rtmlib/tools/solution/body_with_feet.py)
   - [Hand](/rtmlib/tools/solution/hand.py)
-  - [Animal](/rtmlib/tools/solution/animal.py)
+  - [Animal](/rtmlib/tools/solution/animal.py) (bird, cat, dog, horse, sheep, cow, elephant, bear, zebra, giraffe)
   - [Custom](/rtmlib/tools/solution/custom.py)
   - [Wholebody3d](/rtmlib/tools/solution/wholebody3d.py)
 - Detectors (Low-level APIs)
-  - [YOLOX](/rtmlib/tools/object_detection/yolox.py)
+  - [YOLOX](/rtmlib/tools/object_detection/yolox.py) (human and multiclass)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
 - Pose Estimators (Low-level APIs)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
@@ -213,6 +214,7 @@ custom = Custom(det_class='YOLOX',
                det_mode='multiclass', # or det_categories=[0,23] (for example)
                det='https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx',
                det_input_size=(640, 640),
+               pose_class='ViTPose',
                pose='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',
                pose_input_size=(192, 256),
                backend=backend,
@@ -233,11 +235,11 @@ det_model = YOLOX('https://github.com/Megvii-BaseDetection/YOLOX/releases/downlo
                      backend=backend, device=device)
 
 # RTMPose pose estimator
-pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',local path
+pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',
                      backend=backend, device=device)
 
 # ViTPose pose estimator
-pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco_25/vitpose-l-coco_25.onnx',  
+pose_model = ViTPose(onnx_model='https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',  
                      backend=backend, device=device)
 ```
 
@@ -406,6 +408,8 @@ COCO_CLASSES = [
 
 <details open>
 <summary><b>Animal</b></summary>
+
+CATEGORIES = ['gorilla', 'spider-monkey', 'howling-monkey', 'zebra', 'elephant', 'hippo', 'raccon', 'rhino', 'giraffe', 'tiger', 'deer', 'lion', 'panda', 'cheetah', 'black-bear', 'polar-bear', 'antelope', 'fox', 'buffalo', 'cow', 'wolf', 'dog', 'sheep', 'cat', 'horse', 'rabbit', 'pig', 'chimpanzee', 'monkey', 'orangutan']
 
 |                                                                     ONNX Model                                                                      | Input Size | AP (AP10K) |      Description      |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |

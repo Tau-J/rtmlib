@@ -1,4 +1,4 @@
-from .tools import (RTMO, YOLOX, Body, Hand, PoseTracker, RTMDet, RTMPose,
+from .tools import (RTMO, YOLOX, Body, Hand, PoseTracker, RTMDet, RTMPose, RTMPose3d,
                     ViTPose, Wholebody, Wholebody3d, BodyWithFeet, Animal, Custom)
 from .visualization.draw import draw_bbox, draw_skeleton
 

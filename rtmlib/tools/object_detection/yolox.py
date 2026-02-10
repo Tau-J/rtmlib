@@ -23,17 +23,17 @@ class YOLOX(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
-                 det_mode: str = 'human',
+                 mode: str = 'human',
                  nms_thr=0.45,
                  score_thr=0.7,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
         super().__init__(onnx_model,
                          model_input_size,
-                         det_mode,
+                         mode,
                          backend=backend,
                          device=device)
-        self.det_mode = det_mode
+        self.mode = mode
         self.nms_thr = nms_thr
         self.score_thr = score_thr
 
@@ -149,9 +149,9 @@ class YOLOX(BaseTool):
             isbbox = [i for i in isscore]
             final_boxes = final_boxes[isbbox]
 
-        if self.det_mode == 'multiclass':
+        if self.mode == 'multiclass':
             return final_boxes, final_cls_inds
-        elif self.det_mode == 'human':
+        elif self.mode == 'human':
             return final_boxes
         else:
-            raise NotImplementedError(f'det_mode must be \'human\' or \'multiclass\': {self.det_mode} is not supported.')
+            raise NotImplementedError(f'Mode must be \'human\' or \'multiclass\': {self.mode} is not supported.')

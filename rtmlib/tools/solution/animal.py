@@ -10,11 +10,7 @@ backend = 'onnxruntime'  # opencv, onnxruntime
 
 cap = cv2.VideoCapture('./demo.mp4')
 
-openpose_skeleton = True  # True for openpose-style, False for mmpose-style
-
-animal = Animal(to_openpose=openpose_skeleton,
-                      backend=backend,
-                      device=device)
+animal = Animal(backend=backend, device=device)
 
 frame_idx = 0
 
@@ -32,7 +28,7 @@ while cap.isOpened():
     img_show = draw_skeleton(img_show,
                              keypoints,
                              scores,
-                             openpose_skeleton=openpose_skeleton,
+                             openpose_skeleton=True,
                              kpt_thr=0.43)
 
     img_show = cv2.resize(img_show, (960, 540))
@@ -100,7 +96,7 @@ class Animal:
             self.det_categories = det_categories
             self.pose_model = ViTPose(pose,
                                       model_input_size=pose_input_size,
-                                      to_openpose=to_openpose,
+                                      to_openpose=False,
                                       backend=backend,
                                       device=device)
 

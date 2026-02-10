@@ -11,7 +11,7 @@ class RTMPose(BaseTool):
 
     def __init__(self,
                  onnx_model: str,
-                 model_input_size: tuple = (288, 384),
+                 model_input_size: tuple = (192, 256),
                  mean: tuple = (123.675, 116.28, 103.53),
                  std: tuple = (58.395, 57.12, 57.375),
                  to_openpose: bool = False,
