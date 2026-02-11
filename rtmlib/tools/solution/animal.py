@@ -89,7 +89,7 @@ class Animal:
             det_input_size = self.MODE[mode]['det_input_size']
 
         self.det_model = YOLOX(det,
-                               mode='multiclass',
+                               det_mode='multiclass',
                                model_input_size=det_input_size,
                                backend=backend,
                                device=device)
