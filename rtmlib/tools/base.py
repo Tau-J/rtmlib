@@ -35,6 +35,11 @@ RTMLIB_SETTINGS = {
         'CoreMLExecutionProvider'
         if check_mps_support() else 'CPUExecutionProvider'
     },
+    'openvino': {
+        'cpu': 'CPU',
+        'gpu': 'GPU',
+        'npu': 'NPU',
+    },
 }
 
 
@@ -85,17 +90,20 @@ class BaseTool(metaclass=ABCMeta):
             core = Core()
             model_onnx = core.read_model(model=onnx_model)
 
-            if device != 'cpu':
-                print('OpenVINO only supports CPU backend, automatically'
-                      ' switched to CPU backend.')
+            # Map device string to OpenVINO device name
+            ov_device = RTMLIB_SETTINGS['openvino'].get(
+                device, device.upper())
 
             self.compiled_model = core.compile_model(
                 model=model_onnx,
-                device_name='CPU',
+                device_name=ov_device,
                 config={'PERFORMANCE_HINT': 'LATENCY'})
             self.input_layer = self.compiled_model.input(0)
-            self.output_layer0 = self.compiled_model.output(0)
-            self.output_layer1 = self.compiled_model.output(1)
+            # Store all output layers (models may have 1, 2, or more)
+            self._ov_outputs = [
+                self.compiled_model.output(i)
+                for i in range(len(model_onnx.outputs))
+            ]
 
         else:
             raise NotImplementedError
@@ -142,8 +150,6 @@ class BaseTool(metaclass=ABCMeta):
             outputs = self.session.run(sess_output, sess_input)
         elif self.backend == 'openvino':
             results = self.compiled_model(input)
-            output0 = results[self.output_layer0]
-            output1 = results[self.output_layer1]
-            outputs = [output0, output1]
+            outputs = [results[out] for out in self._ov_outputs]
 
         return outputs
