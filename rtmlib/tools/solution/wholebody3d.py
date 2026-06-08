@@ -1,4 +1,4 @@
-"""import time.
+﻿"""import time.
 
 import cv2
 
@@ -53,7 +53,7 @@ class Wholebody3d:
     MODE = {
         'balanced': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',  # noqa
             'det_input_size': (640, 640),
             'pose':
             'https://huggingface.co/Soykaf/RTMW3D-x/resolve/main/onnx/rtmw3d-x_8xb64_cocktail14-384x288-b0a0eab7_20240626.onnx',  # noqa

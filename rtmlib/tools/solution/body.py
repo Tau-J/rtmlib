@@ -1,4 +1,4 @@
-'''
+﻿'''
 Example:
 
 import cv2
@@ -47,26 +47,26 @@ class Body:
     MODE = {
         'performance': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.onnx',  # noqa
             'det_input_size': (640, 640),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.onnx',  # noqa
             'pose_input_size': (288, 384),
         },
         'lightweight': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.onnx',  # noqa
             'det_input_size': (416, 416),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.onnx',  # noqa
             'pose_input_size': (192, 256),
         },
         'balanced': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',  # noqa
             'det_input_size': (640, 640),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.onnx',  # noqa
             'pose_input_size': (192, 256),
         }
     }
@@ -74,17 +74,17 @@ class Body:
     RTMO_MODE = {
         'performance': {
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.onnx',  # noqa
             'pose_input_size': (640, 640),
         },
         'lightweight': {
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.onnx',  # noqa
             'pose_input_size': (640, 640),
         },
         'balanced': {
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.onnx',  # noqa
             'pose_input_size': (640, 640),
         }
     }

@@ -1,4 +1,4 @@
-'''
+﻿'''
 Example:
 
 import cv2
@@ -53,26 +53,26 @@ class Wholebody:
     MODE = {
         'performance': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',  # noqa
             'det_input_size': (640, 640),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.onnx',  # noqa
             'pose_input_size': (288, 384),
         },
         'lightweight': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.onnx',  # noqa
             'det_input_size': (416, 416),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-l-m_simcc-cocktail14_270e-256x192_20231122.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-l-m_simcc-cocktail14_270e-256x192_20231122.onnx',  # noqa
             'pose_input_size': (192, 256),
         },
         'balanced': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',  # noqa
             'det_input_size': (640, 640),
             'pose':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.zip',  # noqa
+            'https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.onnx',  # noqa
             'pose_input_size': (192, 256),
         }
     }

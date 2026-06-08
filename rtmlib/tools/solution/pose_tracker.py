@@ -1,4 +1,4 @@
-'''
+﻿'''
 Example:
 
 import cv2
@@ -22,7 +22,7 @@ pose_tracker = PoseTracker(Wholebody,
 # custom = partial(Custom,
 #                 to_openpose=openpose_skeleton,
 #                 pose_class='RTMO',
-#                 pose='https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip', # noqa
+#                 pose='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.onnx', # noqa
 #                 pose_input_size=(640,640),
 #                 backend=backend,
 #                 device=device)
@@ -31,10 +31,10 @@ pose_tracker = PoseTracker(Wholebody,
 #             Custom,
 #             to_openpose=openpose_skeleton,
 #             det_class='YOLOX',
-#             det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip', # noqa
+#             det='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx', # noqa
 #             det_input_size=(640, 640),
 #             pose_class='RTMPose',
-#             pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip', # noqa
+#             pose='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.onnx', # noqa
 #             pose_input_size=(192, 256),
 #             backend=backend,
 #             device=device)

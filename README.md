@@ -1,4 +1,4 @@
-# rtmlib
+﻿# rtmlib
 
 ![demo](https://github.com/Tau-J/rtmlib/assets/13503330/b7e8ce8b-3134-43cf-bba6-d81656897289)
 
@@ -103,10 +103,10 @@ pose_tracker = PoseTracker(Body,
 # from functools import partial
 # custom = partial(Custom,
 #                 det_class='YOLOX',
-#                 det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',
+#                 det='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',
 #                 det_input_size=(640, 640),
 #                 pose_class='RTMPose',
-#                 pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip',
+#                 pose='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.onnx',
 #                 pose_input_size=(192, 256))
 # pose_tracker = PoseTracker(custom,
 #                         det_frequency=10,
@@ -190,9 +190,9 @@ wholebody = Wholebody(mode='performance',  # 'performance', 'lightweight', 'bala
 
 # By det and pose
 from rtmlib import Body
-body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',
+body = Body(det='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.onnx',
             det_input_size=(640, 640),
-            pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip',
+            pose='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.onnx',
             pose_input_size=(288, 384),
             backend=backend,
             device=device)
@@ -201,10 +201,10 @@ body = Body(det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onn
 from rtmlib import Custom
 # Human pose estimation using YOLOX and RTMPose
 custom = Custom(det_class='YOLOX',
-               det='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.ip',
+               det='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx',
                det_input_size=(640, 640),
                pose_class='RTMPose',
-               pose='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',
+               pose='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.onnx',
                pose_input_size=(192, 256),
                backend=backend,
                device=device)
@@ -227,7 +227,7 @@ For low-level APIs (`Model`), you can specify the model you want to use by passi
 ```Python
 # By onnx_model (.onnx or .zip) by download link or local path
 # YOLOX human detector
-det_model = YOLOX(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip',
+det_model = YOLOX(onnx_model='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.onnx',
                      backend=backend, device=device)
 
 # YOLOX multiclass detector
@@ -236,7 +236,7 @@ det_model = YOLOX('https://github.com/Megvii-BaseDetection/YOLOX/releases/downlo
                      backend=backend, device=device)
 
 # RTMPose pose estimator
-pose_model = RTMPose(onnx_model='https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip',
+pose_model = RTMPose(onnx_model='https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.onnx',
                      backend=backend, device=device)
 
 # ViTPose pose estimator
@@ -263,12 +263,12 @@ Notes:
 |                                                          ONNX Model                                                           | Input Size | AP (person) |       Description        |
 | :---------------------------------------------------------------------------------------------------------------------------: | :--------: | :---------: | :----------------------: |
 |                 [YOLOX-l](https://drive.google.com/file/d/1w9pXC8tT0p9ndMN-CArp1__b2GbzewWI/view?usp=sharing)                 |  640x640   |      -      |     trained on COCO      |
-| [YOLOX-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_nano_8xb8-300e_humanart-40f6f0d0.zip) |  416x416   |    38.9     | trained on HumanArt+COCO |
-| [YOLOX-tiny](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.zip) |  416x416   |    47.7     | trained on HumanArt+COCO |
-|    [YOLOX-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.zip)    |  640x640   |    54.6     | trained on HumanArt+COCO |
-|    [YOLOX-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip)    |  640x640   |    59.1     | trained on HumanArt+COCO |
-|    [YOLOX-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_l_8xb8-300e_humanart-ce1d7a62.zip)    |  640x640   |    60.2     | trained on HumanArt+COCO |
-|    [YOLOX-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip)    |  640x640   |    61.3     | trained on HumanArt+COCO |
+| [YOLOX-nano](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_nano_8xb8-300e_humanart-40f6f0d0.onnx) |  416x416   |    38.9     | trained on HumanArt+COCO |
+| [YOLOX-tiny](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_tiny_8xb8-300e_humanart-6f3252f9.onnx) |  416x416   |    47.7     | trained on HumanArt+COCO |
+|    [YOLOX-s](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_s_8xb8-300e_humanart-3ef259a7.onnx)    |  640x640   |    54.6     | trained on HumanArt+COCO |
+|    [YOLOX-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.onnx)    |  640x640   |    59.1     | trained on HumanArt+COCO |
+|    [YOLOX-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_l_8xb8-300e_humanart-ce1d7a62.onnx)    |  640x640   |    60.2     | trained on HumanArt+COCO |
+|    [YOLOX-x](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.onnx)    |  640x640   |    61.3     | trained on HumanArt+COCO |
 
 </details>
 
@@ -277,7 +277,7 @@ Notes:
 
 |                                                          ONNX Model                                                          | Input Size | AP (hand) |      Description      |
 | :--------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
-| [RTMDet-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip) |  320x320   |   76.0    | trained on 5 datasets |
+| [RTMDet-nano](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.onnx) |  320x320   |   76.0    | trained on 5 datasets |
 
 <details open>
 <summary><b>Multi-class</b></summary>
@@ -312,15 +312,15 @@ COCO_CLASSES = [
 
 |                                                                     ONNX Model                                                                      | Input Size | AP (COCO) |      Description      |
 | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
-| [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.zip) |  256x192   |   65.9    | trained on 7 datasets |
-| [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.zip) |  256x192   |   69.7    | trained on 7 datasets |
-| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.zip) |  256x192   |   74.9    | trained on 7 datasets |
-| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-256x192-4dba18fc_20230504.zip) |  256x192   |   76.7    | trained on 7 datasets |
-| [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-384x288-3f5a1437_20230504.zip) |  384x288   |   78.3    | trained on 7 datasets |
-| [RTMPose-x](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.zip) |  384x288   |   78.8    | trained on 7 datasets |
-|           [RTMO-s](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.zip)           |  640x640   |   68.6    | trained on 7 datasets |
-|          [RTMO-m](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.zip)           |  640x640   |   72.6    | trained on 7 datasets |
-|          [RTMO-l](https://download.openmmlab.com/mmpose/v1/projects/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.zip)           |  640x640   |   74.8    | trained on 7 datasets |
+| [RTMPose-t](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7_420e-256x192-026a1439_20230504.onnx) |  256x192   |   65.9    | trained on 7 datasets |
+| [RTMPose-s](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7_420e-256x192-acd4a1ef_20230504.onnx) |  256x192   |   69.7    | trained on 7 datasets |
+| [RTMPose-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7_420e-256x192-e48f03d0_20230504.onnx) |  256x192   |   74.9    | trained on 7 datasets |
+| [RTMPose-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-256x192-4dba18fc_20230504.onnx) |  256x192   |   76.7    | trained on 7 datasets |
+| [RTMPose-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7_420e-384x288-3f5a1437_20230504.onnx) |  384x288   |   78.3    | trained on 7 datasets |
+| [RTMPose-x](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7_700e-384x288-71d7b7e9_20230629.onnx) |  384x288   |   78.8    | trained on 7 datasets |
+|           [RTMO-s](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-s_8xb32-600e_body7-640x640-dac2bf74_20231211.onnx)           |  640x640   |   68.6    | trained on 7 datasets |
+|          [RTMO-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-m_16xb16-600e_body7-640x640-39e78cc4_20231211.onnx)           |  640x640   |   72.6    | trained on 7 datasets |
+|          [RTMO-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmo/onnx_sdk/rtmo-l_16xb16-600e_body7-640x640-b37118ce_20231211.onnx)           |  640x640   |   74.8    | trained on 7 datasets |
 |                       [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-s-coco.onnx)                       |  256x192   |   75.8    | trained on 6 datasets |
 |                       [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-b-coco.onnx)                       |  256x192   |   77.0    | trained on 6 datasets |
 |                       [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/coco/vitpose-l-coco.onnx)                       |  256x192   |   78.6    | trained on 6 datasets |
@@ -343,11 +343,11 @@ COCO_CLASSES = [
 
 |                                                                          ONNX Model                                                                           | Input Size | AP (Body8) |      Description      |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--------: | :-------------------: |
-|  [RTMPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.zip)  |  256x192   |    68.0    | trained on 7 datasets |
-|  [RTMPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.zip)  |  256x192   |    72.0    | trained on 7 datasets |
-|  [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip)  |  256x192   |    76.7    | trained on 7 datasets |
-|  [RTMPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.zip)  |  256x192   |    78.4    | trained on 7 datasets |
-| [RTMPose-x\*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip) |  384x288   |    80.0    | trained on 7 datasets |
+|  [RTMPose-t](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-t_simcc-body7_pt-body7-halpe26_700e-256x192-6020f8a6_20230605.onnx)  |  256x192   |    68.0    | trained on 7 datasets |
+|  [RTMPose-s](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-s_simcc-body7_pt-body7-halpe26_700e-256x192-7f134165_20230605.onnx)  |  256x192   |    72.0    | trained on 7 datasets |
+|  [RTMPose-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.onnx)  |  256x192   |    76.7    | trained on 7 datasets |
+|  [RTMPose-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-l_simcc-body7_pt-body7-halpe26_700e-256x192-2abb7558_20230605.onnx)  |  256x192   |    78.4    | trained on 7 datasets |
+| [RTMPose-x\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.onnx) |  384x288   |    80.0    | trained on 7 datasets |
 
 </details>
 
@@ -359,15 +359,15 @@ COCO_CLASSES = [
 |                 [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-s-wholebody.onnx)                  |  256x192   |    54.4    |      trained on 6 datasets      |
 |                 [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-b-wholebody.onnx)                  |  256x192   |    57.4    |      trained on 6 datasets      |
 |                 [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx)                  |  256x192   |    60.6    |      trained on 6 datasets      |
-| [DWPose-t](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-ucoco_dw-ucoco_270e-256x192-dcf277bf_20230728.zip) |  256x192   |    48.5    | trained on COCO-Wholebody+UBody |
-| [DWPose-s](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-ucoco_dw-ucoco_270e-256x192-3fd922c8_20230728.zip) |  256x192   |    53.8    | trained on COCO-Wholebody+UBody |
-| [DWPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-ucoco_dw-ucoco_270e-256x192-c8b76419_20230728.zip) |  256x192   |    60.6    | trained on COCO-Wholebody+UBody |
-| [DWPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-256x192-4d6dfc62_20230728.zip) |  256x192   |    63.1    | trained on COCO-Wholebody+UBody |
-| [DWPose-l](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-384x288-2438fd99_20230728.zip) |  384x288   |    66.5    | trained on COCO-Wholebody+UBody |
-|          [RTMW-m](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-m-s_simcc-cocktail14_270e-256x192_20231122.zip)          |  256x192   |    58.2    |     trained on 14 datasets      |
-|          [RTMW-l](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.zip)          |  256x192   |    66.0    |     trained on 14 datasets      |
-|         [RTMW-l\*](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.zip)         |  384x288   |    70.1    |     trained on 14 datasets      |
-|  [RTMW-x\*](https://download.openmmlab.com/mmpose/v1/projects/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.zip)   |  384x288   |    70.2    |     trained on 14 datasets      |
+| [DWPose-t](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-t_simcc-ucoco_dw-ucoco_270e-256x192-dcf277bf_20230728.onnx) |  256x192   |    48.5    | trained on COCO-Wholebody+UBody |
+| [DWPose-s](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-s_simcc-ucoco_dw-ucoco_270e-256x192-3fd922c8_20230728.onnx) |  256x192   |    53.8    | trained on COCO-Wholebody+UBody |
+| [DWPose-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-ucoco_dw-ucoco_270e-256x192-c8b76419_20230728.onnx) |  256x192   |    60.6    | trained on COCO-Wholebody+UBody |
+| [DWPose-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-256x192-4d6dfc62_20230728.onnx) |  256x192   |    63.1    | trained on COCO-Wholebody+UBody |
+| [DWPose-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-l_simcc-ucoco_dw-ucoco_270e-384x288-2438fd99_20230728.onnx) |  384x288   |    66.5    | trained on COCO-Wholebody+UBody |
+|          [RTMW-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-m-s_simcc-cocktail14_270e-256x192_20231122.onnx)          |  256x192   |    58.2    |     trained on 14 datasets      |
+|          [RTMW-l](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-256x192_20231122.onnx)          |  256x192   |    66.0    |     trained on 14 datasets      |
+|         [RTMW-l\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-dw-x-l_simcc-cocktail14_270e-384x288_20231122.onnx)         |  384x288   |    70.1    |     trained on 14 datasets      |
+|  [RTMW-x\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmw/onnx_sdk/rtmw-x_simcc-cocktail13_pt-ucoco_270e-384x288-0949e3a9_20230925.onnx)   |  384x288   |    70.2    |     trained on 14 datasets      |
 
 </details>
 
@@ -385,7 +385,7 @@ COCO_CLASSES = [
 
 |                                                                       ONNX Model                                                                        | Input Size | **AUC** (Hand56) |      Description      |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--------------: | :-------------------: |
-| [RTMPose-m\*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-hand5_pt-aic-coco_210e-256x256-74fb594_20230320.zip) |  256x256   |       83.9       | trained on 5 datasets |
+| [RTMPose-m\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-hand5_pt-aic-coco_210e-256x256-74fb594_20230320.onnx) |  256x256   |       83.9       | trained on 5 datasets |
 
 </details>
 
@@ -394,9 +394,9 @@ COCO_CLASSES = [
 
 |                                                                      ONNX Model                                                                      | Input Size | AP (Face6) |      Description      |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--------: | :-------------------: |
-| [RTMPose-t\*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-t_simcc-face6_pt-in1k_120e-256x256-df79d9a5_20230529.zip) |  256x256   |     -      | trained on 6 datasets |
-| [RTMPose-s\*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-s_simcc-face6_pt-in1k_120e-256x256-d779fdef_20230529.zip) |  256x256   |     -      | trained on 6 datasets |
-| [RTMPose-m\*](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-face6_pt-in1k_120e-256x256-72a37400_20230529.zip) |  256x256   |     -      | trained on 6 datasets |
+| [RTMPose-t\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-t_simcc-face6_pt-in1k_120e-256x256-df79d9a5_20230529.onnx) |  256x256   |     -      | trained on 6 datasets |
+| [RTMPose-s\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-s_simcc-face6_pt-in1k_120e-256x256-d779fdef_20230529.onnx) |  256x256   |     -      | trained on 6 datasets |
+| [RTMPose-m\*](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-face6_pt-in1k_120e-256x256-72a37400_20230529.onnx) |  256x256   |     -      | trained on 6 datasets |
 
 </details>
 
@@ -409,7 +409,7 @@ CATEGORIES = ['gorilla', 'spider-monkey', 'howling-monkey', 'zebra', 'elephant',
 
 |                                                                       ONNX Model                                                                       | Input Size | AP (AP10K) |      Description      |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------: | :--------: | :--------: | :-------------------: |
-| [RTMPose-m](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-ap10k_pt-aic-coco_210e-256x256-7a041aa1_20230206.zip) |  256x256   |    72.2    |   trained on AP-10K   |
+| [RTMPose-m](https://huggingface.co/datasets/DavidPagnon/rtmlib_models/resolve/main/mmpose/rtmposev1/onnx_sdk/rtmpose-m_simcc-ap10k_pt-aic-coco_210e-256x256-7a041aa1_20230206.onnx) |  256x256   |    72.2    |   trained on AP-10K   |
 |                      [ViTPose++-s](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-s-apt36k.onnx)                       |  256x192   |    74.2    | trained on 6 datasets |
 |                      [ViTPose++-b](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx)                       |  256x192   |    75.9    | trained on 6 datasets |
 |                      [ViTPose++-l](https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-h-apt36k.onnx)                       |  256x192   |    80.8    | trained on 6 datasets |
