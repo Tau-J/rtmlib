@@ -160,6 +160,7 @@ python webui.py
   - [Wholebody3d](/rtmlib/tools/solution/wholebody3d.py)
 - Detectors (Low-level APIs)
   - [YOLOX](/rtmlib/tools/object_detection/yolox.py) (human and multiclass)
+  - [RFDETR](/rtmlib/tools/object_detection/rfdetr.py) (human and multiclass)
   - [RTMDet](/rtmlib/tools/object_detection/rtmdet.py)
 - Pose Estimators (Low-level APIs)
   - [RTMPose](/rtmlib/tools/pose_estimation/rtmpose.py)
@@ -475,6 +476,16 @@ CATEGORIES = ['gorilla', 'spider-monkey', 'howling-monkey', 'zebra', 'elephant',
       pages={38571--38584},
       year={2022}
 }
+
+@misc{robinson2025rfdetr,
+    title={RF-DETR: Neural Architecture Search for Real-Time Detection Transformers},
+    author={Isaac Robinson and Peter Robicheaux and Matvei Popov and Deva Ramanan and Neehar Peri},
+    year={2025},
+    eprint={2511.09554},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV},
+    url={https://arxiv.org/abs/2511.09554},
+}
 ```
 
 ### Acknowledgement
@@ -485,3 +496,5 @@ Our code is based on these repos:
 - [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose)
 - [DWPose](https://github.com/IDEA-Research/DWPose/tree/opencv_onnx)
 - [ViTPose](https://github.com/ViTAE-Transformer/ViTPose)
+- [RFDETR](https://github.com/roboflow/rf-detr)
+- [OpenDetect](https://github.com/saifkhichi96/opendetect)
