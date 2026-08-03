@@ -251,6 +251,8 @@ By defaults, rtmlib will automatically download and apply models with the best p
 
 More models can be found in [RTMPose](https://github.com/open-mmlab/mmpose/tree/dev-1.x/projects/rtmpose) and [ViTPose](https://huggingface.co/JunkyByte/easy_ViTPose/tree/main/onnx) Model Zoos for pose estimation, and [YOLOX](https://github.com/Megvii-BaseDetection/YOLOX/tree/main/demo/ONNXRuntime) for multiclass detection.
 
+All checkpoints hosted on `download.openmmlab.com` are also mirrored at [huggingface.co/Tau-J/RTMPose](https://huggingface.co/Tau-J/RTMPose). If the original OpenMMLab download server is ever unreachable, `rtmlib` will automatically retry the download from this mirror -- no extra configuration is needed.
+
 ### Detectors
 
 <details open>

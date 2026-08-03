@@ -22,6 +22,33 @@ def _get_rtmhub_dir():
     return os.path.join(torch_home, 'hub')
 
 
+# Maps known upstream hosting prefixes to a mirror on the Hugging Face Hub,
+# used as an automatic fallback when the original host is unreachable (e.g.
+# the OpenMMLab download server expires/changes). Only prefixes that have
+# actually been mirrored should be added here.
+# See https://huggingface.co/Tau-J/RTMPose for the mirrored checkpoints.
+_HF_MIRROR_MAP = {
+    'https://download.openmmlab.com/mmpose/v1/projects/':
+    'https://huggingface.co/Tau-J/RTMPose/resolve/main/',
+}
+
+
+def get_mirror_url(url: str) -> Optional[str]:
+    """Return a Hugging Face mirror URL for known upstream hosts, or
+    ``None`` if no mirror is registered for this URL.
+
+    Args:
+        url (str): The original checkpoint URL.
+
+    Returns:
+        Optional[str]: The corresponding mirror URL, or ``None``.
+    """
+    for prefix, mirror_prefix in _HF_MIRROR_MAP.items():
+        if url.startswith(prefix):
+            return mirror_prefix + url[len(prefix):]
+    return None
+
+
 def extract_zip(zip_file_path, extract_to_path):
     if not os.path.exists(extract_to_path):
         os.makedirs(extract_to_path)
@@ -30,7 +57,8 @@ def extract_zip(zip_file_path, extract_to_path):
         zip_ref.extractall(extract_to_path)
 
 
-def download_url_to_file(url, dst, hash_prefix=None, progress=True):
+def download_url_to_file(url, dst, hash_prefix=None, progress=True,
+                         timeout=30):
     """Download object at the given URL to a local path.
 
     Modified from `torch.hub.download_url_to_file`.
@@ -43,10 +71,15 @@ def download_url_to_file(url, dst, hash_prefix=None, progress=True):
             file should start with ``hash_prefix``. Defaults to None.
         progress (bool): whether or not to display a progress
             bar to stderr Defaults to True.
+        timeout (float, optional): timeout in seconds for the underlying
+            socket operations (connect / each read). This ensures a
+            stalled/unresponsive server raises promptly instead of hanging
+            indefinitely, which matters for the automatic mirror fallback
+            in `download_checkpoint` to kick in reliably. Defaults to 30.
     """
     file_size = None
     req = Request(url, headers={'User-Agent': 'mmlmtools'})
-    u = urlopen(req)
+    u = urlopen(req, timeout=timeout)
     meta = u.info()
     if hasattr(meta, 'getheaders'):
         content_length = meta.getheaders('Content-Length')
@@ -137,13 +170,34 @@ def download_checkpoint(url: str,
         if os.path.exists(onnx_name):
             return str(onnx_name)
 
-        sys.stderr.write('Downloading: "{}" to {}\n'.format(url, cached_file))
         hash_prefix = None
         if check_hash:
             HASH_REGEX = re.compile(r'-([a-f0-9]*)\.')
             r = HASH_REGEX.search(filename)  # r is Optional[Match[str]]
             hash_prefix = r.group(1) if r else None
-        download_url_to_file(url, cached_file, hash_prefix, progress=progress)
+
+        try:
+            sys.stderr.write(
+                'Downloading: "{}" to {}\n'.format(url, cached_file))
+            download_url_to_file(url, cached_file, hash_prefix,
+                                 progress=progress)
+        except Exception as e:
+            # Fall back to a Hugging Face mirror (if one is registered for
+            # this URL) when the original host is unreachable, e.g. because
+            # it is down, rate-limiting, or has been decommissioned. This
+            # only triggers when the primary download itself fails; it does
+            # not silently mask a corrupted download (`download_url_to_file`
+            # only renames the temp file into place after a full, and
+            # hash-verified when `check_hash=True`, download).
+            mirror_url = get_mirror_url(url)
+            if mirror_url is None:
+                raise
+            sys.stderr.write(
+                'Failed to download from "{}" ({}: {}). Retrying from '
+                'mirror: "{}"\n'.format(url, type(e).__name__, e,
+                                        mirror_url))
+            download_url_to_file(mirror_url, cached_file, hash_prefix,
+                                 progress=progress)
 
     if str(cached_file).split('.')[-1] == 'zip':
         # os.system(f'unzip -d {dst_dir}/tmp {cached_file}')
