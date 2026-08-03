@@ -1,8 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "rtmlib"
-version = "0.0.15"
+dynamic = ["version"]
 description = "RTMPose series (RTMPose, DWPose, RTMO, RTMW, VitPose) without mmcv, mmpose, mmdet etc."
 readme = "README.md"
+license = { text = "Apache License 2.0" }
+authors = [{ name = "Tau-J", email = "taujiang@outlook.com" }]
 requires-python = ">=3.10"
 dependencies = [
     "numpy",
@@ -11,3 +17,24 @@ dependencies = [
     "opencv-python",
     "tqdm",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Tau-J/rtmlib"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+# Single source of truth for the version number: `rtmlib/version.py`.
+# (Previously, `pyproject.toml` declared version="0.0.15" while the
+# now-removed `setup.py` read a stale version.py="0.0.13" -- two
+# out-of-sync numbers for the same package. Separately, and more
+# seriously, `pyproject.toml` declared `requires-python = ">=3.10"` while
+# `setup.py` declared `python_requires='>=3.7'`; building with
+# `python -m build` picked up `pyproject.toml`'s *version* but silently
+# fell back to `setup.py`'s *Requires-Python* value, so the published
+# package never actually enforced Python >=3.10 as intended.)
+[tool.setuptools.dynamic]
+version = { attr = "rtmlib.version.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["rtmlib*"]

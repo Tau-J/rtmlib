@@ -69,6 +69,37 @@ def post_dark_udp(coords, batch_heatmaps, kernel=3):
     return coords
 
 
+def _combine_axis_scores(max_val_x: np.ndarray, max_val_y: np.ndarray,
+                         method: str) -> np.ndarray:
+    """Combine the per-axis SimCC max-response values into a single
+    per-keypoint confidence score.
+
+    NOTE: `get_simcc_maximum` (2D) and `get_simcc_maximum3d` historically
+    used two different, silently-diverging formulas here ('mean' vs 'min'
+    respectively). This helper makes that divergence explicit and
+    documented in a single place, while preserving the exact numerical
+    behavior each call site already had, to avoid silently changing the
+    output (and therefore `kpt_thr`-based filtering behavior) of existing
+    2D/3D models. Maintainers with ground-truth knowledge of the intended
+    scoring semantics for RTMW3D should revisit whether these should
+    actually be unified.
+
+    Args:
+        max_val_x (np.ndarray): Max SimCC response along the x axis.
+        max_val_y (np.ndarray): Max SimCC response along the y axis.
+        method (str): Either 'mean' or 'min'.
+
+    Returns:
+        np.ndarray: Combined confidence score.
+    """
+    if method == 'mean':
+        return 0.5 * (max_val_x + max_val_y)
+    elif method == 'min':
+        return np.minimum(max_val_x, max_val_y)
+    else:
+        raise ValueError(f"method must be 'mean' or 'min': {method!r}")
+
+
 def get_simcc_maximum(simcc_x: np.ndarray,
                       simcc_y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     """Get maximum response location and value from simcc representations.
@@ -101,10 +132,8 @@ def get_simcc_maximum(simcc_x: np.ndarray,
     max_val_x = np.amax(simcc_x, axis=1)
     max_val_y = np.amax(simcc_y, axis=1)
 
-    # get maximum value across x and y axis
-    # mask = max_val_x > max_val_y
-    # max_val_x[mask] = max_val_y[mask]
-    vals = 0.5 * (max_val_x + max_val_y)
+    # combine the per-axis max responses into a single confidence score
+    vals = _combine_axis_scores(max_val_x, max_val_y, method='mean')
     locs[vals <= 0.] = -1
 
     # reshape
@@ -164,9 +193,10 @@ def get_simcc_maximum3d(simcc_x: np.ndarray, simcc_y: np.ndarray,
     max_val_x = np.amax(simcc_x, axis=1)
     max_val_y = np.amax(simcc_y, axis=1)
 
-    mask = max_val_x > max_val_y
-    max_val_x[mask] = max_val_y[mask]
-    vals = max_val_x
+    # NOTE: kept as 'min' (rather than 'mean' as in `get_simcc_maximum`) to
+    # preserve the existing numerical behavior of RTMPose3d/RTMW3D. See
+    # `_combine_axis_scores` docstring for context.
+    vals = _combine_axis_scores(max_val_x, max_val_y, method='min')
     locs[vals <= 0.] = -1
 
     if n is not None:

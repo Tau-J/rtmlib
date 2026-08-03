@@ -35,9 +35,30 @@ def multiclass_nms(boxes, scores, nms_thr, score_thr):
     """Multiclass NMS implemented in Numpy.
 
     Class-aware version.
+
+    Args:
+        boxes (np.ndarray): Boxes in shape (N, 4), xyxy format.
+        scores (np.ndarray): Per-class scores in shape (N, num_classes).
+        nms_thr (float): IoU threshold for NMS.
+        score_thr (float): Score threshold to filter out low-confidence
+            boxes before NMS.
+
+    Returns:
+        tuple:
+        - dets (np.ndarray | None): Kept detections in shape (M, 6),
+            formatted as (x1, y1, x2, y2, score, cls_ind). ``None`` if no
+            detection survives.
+        - keep (np.ndarray | None): Indices into the *original* ``boxes``/
+            ``scores`` arrays (axis 0) for each row of ``dets``, i.e.
+            ``dets[i, :4] == boxes[keep[i]]``. ``None`` if no detection
+            survives. Note that the same original index may appear more
+            than once if the corresponding box survives NMS under more
+            than one class.
     """
     final_dets = []
+    final_keep = []
     num_classes = scores.shape[1]
+    all_indices = np.arange(boxes.shape[0])
     for cls_ind in range(num_classes):
         cls_scores = scores[:, cls_ind]
         valid_score_mask = cls_scores > score_thr
@@ -46,12 +67,19 @@ def multiclass_nms(boxes, scores, nms_thr, score_thr):
         else:
             valid_scores = cls_scores[valid_score_mask]
             valid_boxes = boxes[valid_score_mask]
+            valid_indices = all_indices[valid_score_mask]
             keep = nms(valid_boxes, valid_scores, nms_thr)
             if len(keep) > 0:
                 cls_inds = np.ones((len(keep), 1)) * cls_ind
                 dets = np.concatenate(
                     [valid_boxes[keep], valid_scores[keep, None], cls_inds], 1)
                 final_dets.append(dets)
+                # Map the NMS-local `keep` indices (relative to
+                # `valid_boxes`) back to indices in the original,
+                # unfiltered `boxes`/`scores` arrays. Callers (e.g.
+                # RTMO) rely on this to index other per-box arrays
+                # (such as keypoints) that share the original ordering.
+                final_keep.append(valid_indices[keep])
     if len(final_dets) == 0:
         return None, None
-    return np.concatenate(final_dets, 0), keep
+    return np.concatenate(final_dets, 0), np.concatenate(final_keep, 0)

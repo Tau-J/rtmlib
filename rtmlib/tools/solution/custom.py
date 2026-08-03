@@ -115,6 +115,7 @@ while cap.isOpened():
 
 '''
 import importlib
+import inspect
 
 import numpy as np
 
@@ -143,6 +144,25 @@ class Custom:
                     det_mode = 'multiclass'
 
                 det_class = getattr(rtmlib_module, det_class)
+
+                # All detectors shipped with rtmlib (YOLOX, RTMDet, RFDETR)
+                # accept `det_mode`. This check is a defensive guard in
+                # case a future/custom detector class does not, so we fail
+                # with a clear, actionable error instead of a raw
+                # `TypeError: unexpected keyword argument`. A class that
+                # accepts arbitrary `**kwargs` is also considered
+                # compatible, since `det_mode=...` would simply be
+                # forwarded through it.
+                det_params = inspect.signature(det_class.__init__).parameters
+                accepts_det_mode = 'det_mode' in det_params or any(
+                    p.kind == inspect.Parameter.VAR_KEYWORD
+                    for p in det_params.values())
+                if not accepts_det_mode:
+                    raise TypeError(
+                        f'{det_class.__name__} does not support `det_mode`. '
+                        'Custom requires the detector class to accept a '
+                        '`det_mode` argument (\'human\' or \'multiclass\').')
+
                 self.det_model = det_class(det,
                                            model_input_size=det_input_size,
                                            det_mode=det_mode,

@@ -1,4 +1,5 @@
 # Code modified from https://github.com/IDEA-Research/DWPose/blob/opencv_onnx/ControlNet-v1-1-nightly/annotator/dwpose/cv_ox_det.py  # noqa
+import warnings
 from typing import List, Tuple
 
 import cv2
@@ -28,16 +29,38 @@ class YOLOX(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
-                 det_mode: str = 'human',
+                 det_mode: str = None,
                  nms_thr=0.45,
                  score_thr=0.7,
                  backend: str = 'onnxruntime',
-                 device: str = 'cpu'):
+                 device: str = 'cpu',
+                 *,
+                 mode: str = None):
         super().__init__(onnx_model,
                          model_input_size,
                          backend=backend,
                          device=device)
-        self.det_mode = det_mode
+
+        # `mode` was renamed to `det_mode` (see #70) to avoid confusion with
+        # the solution-level `mode='balanced'/'performance'/'lightweight'`
+        # argument. Kept here as a keyword-only, deprecated alias for
+        # backward compatibility -- keyword-only so that it can never
+        # accidentally capture a positional argument meant for `nms_thr`/
+        # `score_thr`/etc. (this previously broke any code calling YOLOX
+        # positionally beyond `det_mode`).
+        if mode is not None:
+            warnings.warn(
+                '`mode` is deprecated for YOLOX, please use `det_mode` '
+                'instead. Support for `mode` will be removed in a future '
+                'release.', DeprecationWarning, stacklevel=2)
+            if det_mode is not None and det_mode != mode:
+                raise ValueError(
+                    f'Conflicting values for `det_mode` ({det_mode!r}) and '
+                    f'the deprecated `mode` ({mode!r}). Please only specify '
+                    '`det_mode`.')
+            det_mode = mode
+
+        self.det_mode = det_mode if det_mode is not None else 'human'
         self.nms_thr = nms_thr
         self.score_thr = score_thr
 
@@ -138,12 +161,10 @@ class YOLOX(BaseTool):
                                         nms_thr=self.nms_thr,
                                         score_thr=self.score_thr)
             if dets is not None:
-                pack_dets = (dets[:, :4], dets[:, 4], dets[:, 5])
-                final_boxes, final_scores, final_cls_inds = pack_dets
-                keep = final_scores > self.nms_thr
-                final_boxes = final_boxes[keep]
-                final_scores = final_scores[keep]
-                final_cls_inds = final_cls_inds[keep].astype(int)
+                # `multiclass_nms` already filters by `self.score_thr`, so
+                # no extra score filtering is needed here.
+                final_boxes = dets[:, :4]
+                final_cls_inds = dets[:, 5].astype(int)
             else:
                 final_boxes, final_cls_inds = np.array([]), np.array([])
 

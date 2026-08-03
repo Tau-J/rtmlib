@@ -1,4 +1,5 @@
 # Code modified from https://github.com/dfki-av/spinepose/blob/main/src/spinepose/tools/object_detection/rfdetr.py  # noqa
+import warnings
 from typing import List, Tuple
 
 import cv2
@@ -42,13 +43,15 @@ class RFDETR(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (576, 576),
-                 mode: str = 'human',
+                 det_mode: str = None,
                  score_thr: float = 0.3,
                  num_select: int = 300,
                  mean: tuple = (0.485, 0.456, 0.406),
                  std: tuple = (0.229, 0.224, 0.225),
                  backend: str = 'onnxruntime',
-                 device: str = 'cpu'):
+                 device: str = 'cpu',
+                 *,
+                 mode: str = None):
         super().__init__(onnx_model,
                          model_input_size,
                          mean=mean,
@@ -58,7 +61,26 @@ class RFDETR(BaseTool):
         self.mean = np.array(mean, dtype=np.float32)
         self.std = np.array(std, dtype=np.float32)
 
-        self.mode = mode
+        # `mode` is deprecated in favor of `det_mode`, for consistency
+        # with YOLOX/RTMDet and to avoid confusion with the solution-level
+        # `mode='balanced'/'performance'/'lightweight'` argument. Kept
+        # keyword-only so it can never accidentally capture a positional
+        # argument meant for `score_thr`/`num_select`/`mean`/`std`/etc. --
+        # those kept their exact original positions for backward
+        # compatibility with pre-existing positional call sites.
+        if mode is not None:
+            warnings.warn(
+                '`mode` is deprecated for RFDETR, please use `det_mode` '
+                'instead. Support for `mode` will be removed in a future '
+                'release.', DeprecationWarning, stacklevel=2)
+            if det_mode is not None and det_mode != mode:
+                raise ValueError(
+                    f'Conflicting values for `det_mode` ({det_mode!r}) and '
+                    f'the deprecated `mode` ({mode!r}). Please only specify '
+                    '`det_mode`.')
+            det_mode = mode
+
+        self.det_mode = det_mode if det_mode is not None else 'human'
         self.score_thr = score_thr
         self.num_select = num_select
 
@@ -162,7 +184,7 @@ class RFDETR(BaseTool):
             for i in range(batch_size):
                 keep = scores[i] > self.score_thr  # exclude low-confidence detections
                 keep &= labels[i] > 0  # exclude background class
-                if self.mode == 'human':
+                if self.det_mode == 'human':
                     keep &= mapped_labels[i] == 0
 
                 final_boxes.append(boxes_xyxy[i][keep].astype(np.float32))
@@ -183,11 +205,11 @@ class RFDETR(BaseTool):
             final_scores = np.array([], dtype=np.float32)
             final_cls_inds = np.array([], dtype=np.int64)
 
-        if self.mode == 'multiclass':
+        if self.det_mode == 'multiclass':
             return final_boxes, final_cls_inds
-        elif self.mode == 'human':
+        elif self.det_mode == 'human':
             return final_boxes
         else:
             raise NotImplementedError(
-                f'Mode must be \'human\' or \'multiclass\': {self.mode} is not supported.'
+                f'det_mode must be \'human\' or \'multiclass\': {self.det_mode} is not supported.'
             )

@@ -129,7 +129,12 @@ class PoseTracker:
     Args:
         solution (type): rtmlib solutions, e.g. Wholebody, Body, Custom, etc.
         det_frequency (int): Frequency of object detection.
-        mode (str): 'performance', 'lightweight', or 'balanced'.
+        mode (str, optional): 'performance', 'lightweight', or 'balanced'.
+            If ``None`` (default), the wrapped solution's own default mode
+            is used instead of being overridden. Not every solution
+            supports every mode (e.g. ``Hand`` only supports
+            ``'lightweight'``), so only pass this if you intend to
+            override the solution's default.
         to_openpose (bool): Whether to use openpose-style skeleton.
         backend (str): Backend of pose estimation model.
         device (str): Device of pose estimation model.
@@ -141,27 +146,56 @@ class PoseTracker:
                  det_frequency: int = 1,
                  tracking: bool = True,
                  tracking_thr: float = 0.3,
-                 mode: str = 'balanced',
+                 mode: str = None,
                  to_openpose: bool = False,
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
-        model = solution(mode=mode,
-                         to_openpose=to_openpose,
-                         backend=backend,
-                         device=device)
+        # Only forward `mode` if the caller explicitly provided one.
+        # Solutions do not share the same set of valid `mode` values (e.g.
+        # `Hand` only supports `mode='lightweight'`, while `Body`/
+        # `Wholebody`/etc. default to `mode='balanced'`), so unconditionally
+        # forcing a single default here would override -- and potentially
+        # break -- a solution's own, valid default.
+        solution_kwargs = dict(to_openpose=to_openpose,
+                               backend=backend,
+                               device=device)
+        if mode is not None:
+            solution_kwargs['mode'] = mode
+        model = solution(**solution_kwargs)
 
-        try:
-            self.det_model = model.det_model
-            self.det_mode = self.det_model.mode
+        det_model = getattr(model, 'det_model', None)
+        if det_model is None:
+            # Expected for one-stage algorithms (e.g. RTMO / Custom without
+            # `det_class`), which have no separate detector by design.
+            self.det_model = None
+            self.det_mode = None
+            self.det_categories = None
+        else:
+            if not hasattr(det_model, 'det_mode'):
+                # This is *not* the expected "one-stage, no detector" case:
+                # a detector instance exists but doesn't expose the
+                # `det_mode` contract that every rtmlib detector (YOLOX /
+                # RTMDet / RFDETR) is expected to provide. Silently
+                # disabling detection here would make PoseTracker fall back
+                # to running pose estimation on the full image every frame,
+                # which quietly breaks multi-person tracking without any
+                # visible error. Fail loudly instead.
+                raise AttributeError(
+                    f'{type(det_model).__name__} (used as the detector of '
+                    f'{solution}) has no `det_mode` attribute. PoseTracker '
+                    'requires detectors that expose `det_mode` (\'human\' '
+                    'or \'multiclass\'), as YOLOX/RTMDet/RFDETR do. If you '
+                    'are using a custom detector class, make sure it sets '
+                    '`self.det_mode`.')
+
+            self.det_model = det_model
+            self.det_mode = det_model.det_mode
             if hasattr(model, 'det_categories') and model.det_categories:
                 self.det_mode = 'multiclass'
                 self.det_categories = model.det_categories
             else:
                 self.det_categories = None
-        except Exception as e:  # noqa
-            print(f'Warning: {e}, pose tracker will not use detection results')
-            self.det_model = None
 
         self.pose_model = model.pose_model
 
