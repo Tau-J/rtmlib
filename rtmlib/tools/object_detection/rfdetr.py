@@ -236,12 +236,4 @@ class RFDETR(BaseTool):
             final_scores = np.array([], dtype=np.float32)
             final_cls_inds = np.array([], dtype=np.int64)
 
-        if self.det_mode in ('multiclass', 'class_ids'):
-            return final_boxes, final_cls_inds
-        elif self.det_mode == 'human':
-            return final_boxes
-        else:
-            raise NotImplementedError(
-                f'det_mode must be \'human\', \'multiclass\', a COCO class id, '
-                f'or a list of COCO class ids: {self.det_mode} is not supported.'
-            )
+        return final_boxes, final_cls_inds
