@@ -1,6 +1,6 @@
 # Code modified from https://github.com/dfki-av/spinepose/blob/main/src/spinepose/tools/object_detection/rfdetr.py  # noqa
 import warnings
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -26,24 +26,24 @@ def bbox_cxcywh_to_xyxy(bboxes: np.ndarray) -> np.ndarray:
 class RFDETR(BaseTool):
     COCO_CLASSES = [
         'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
-        'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign',
+        'truck', 'boat', 'traffic light', 'fire hydrant', '', 'stop sign',
         'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-        'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella',
-        'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+        'cow', 'elephant', 'bear', 'zebra', 'giraffe', '', 'backpack', 'umbrella',
+        '', '', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
         'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
-        'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork',
+        'surfboard', 'tennis racket', 'bottle', '', 'wine glass', 'cup', 'fork',
         'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
         'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
-        'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
-        'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
-        'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+        'couch', 'potted plant', 'bed', '', 'dining table', '', '', 'toilet', '', 
+        'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
+        'oven', 'toaster', 'sink', 'refrigerator', '', 'book', 'clock', 'vase',
         'scissors', 'teddy bear', 'hair drier', 'toothbrush'
     ]
 
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (576, 576),
-                 det_mode: str = None,
+                 det_mode: Union[str, int, List[int]] = None,
                  score_thr: float = 0.3,
                  num_select: int = 300,
                  mean: tuple = (0.485, 0.456, 0.406),
@@ -81,6 +81,35 @@ class RFDETR(BaseTool):
             det_mode = mode
 
         self.det_mode = det_mode if det_mode is not None else 'human'
+        self.class_ids = None
+        det_mode_err_msg = (
+            'det_mode must be \'human\', \'multiclass\', a COCO class id, '
+            'or a list of COCO class ids. COCO classes are the indices of '
+            f'the following list:\n{self.COCO_CLASSES}'
+        )
+        if isinstance(self.det_mode, (int, np.integer)):
+            self.class_ids = [int(self.det_mode)]
+        elif isinstance(self.det_mode, (list, tuple, np.ndarray)):
+            for x in self.det_mode:
+                if not isinstance(x, (int, np.integer)):
+                    raise TypeError(
+                        f'Wrong det_mode value: Got element of type '
+                        f'{type(x).__name__}.\n{det_mode_err_msg}'
+                    )
+            self.class_ids = [int(x) for x in self.det_mode]
+        if self.class_ids is not None:
+            for cid in self.class_ids:
+                if not 0 <= cid < len(self.COCO_CLASSES) or not self.COCO_CLASSES[cid]:
+                    raise ValueError(
+                        f'Wrong det_mode value: {cid} is not a valid COCO '
+                        f'class id.\n{det_mode_err_msg}'
+                    )
+            warnings.warn(
+                'det_mode was set to only detect ' + 
+                ', '.join(f'{cid} ({self.COCO_CLASSES[cid]})' for cid in self.class_ids),
+                UserWarning, stacklevel=2)
+            self.det_mode = 'class_ids'
+
         self.score_thr = score_thr
         self.num_select = num_select
 
@@ -186,6 +215,8 @@ class RFDETR(BaseTool):
                 keep &= labels[i] > 0  # exclude background class
                 if self.det_mode == 'human':
                     keep &= mapped_labels[i] == 0
+                elif self.det_mode == 'class_ids':
+                    keep &= np.isin(mapped_labels[i], self.class_ids)
 
                 final_boxes.append(boxes_xyxy[i][keep].astype(np.float32))
                 final_scores.append(scores[i][keep].astype(np.float32))
@@ -205,11 +236,12 @@ class RFDETR(BaseTool):
             final_scores = np.array([], dtype=np.float32)
             final_cls_inds = np.array([], dtype=np.int64)
 
-        if self.det_mode == 'multiclass':
+        if self.det_mode in ('multiclass', 'class_ids'):
             return final_boxes, final_cls_inds
         elif self.det_mode == 'human':
             return final_boxes
         else:
             raise NotImplementedError(
-                f'det_mode must be \'human\' or \'multiclass\': {self.det_mode} is not supported.'
+                f'det_mode must be \'human\', \'multiclass\', a COCO class id, '
+                f'or a list of COCO class ids: {self.det_mode} is not supported.'
             )
