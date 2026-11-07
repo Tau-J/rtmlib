@@ -500,3 +500,11 @@ Our code is based on these repos:
 - [ViTPose](https://github.com/ViTAE-Transformer/ViTPose)
 - [RFDETR](https://github.com/roboflow/rf-detr)
 - [OpenDetect](https://github.com/saifkhichi96/opendetect)
+
+Commercial Use Statement:
+
+Both the rtmlib repository and the RTMPose series of codes follow the Apache-2.0 open-source license. Commercial software is free to use the software code released under Apache-2.0 without the need to open-source your own code, as long as the original source of the code is properly credited.
+
+For model weights trained on non-commercial datasets(e.g. COCO-WholeBody), please refer to [this](https://github.com/Tau-J/rtmlib/issues/65).
+
+If you intend to use this project (especially model weights) for commercial purposes, please carefully review the datasets used for training and their applicable license terms, and contact the respective dataset authors or maintainers for authorization and consultation. You are welcome to share any replies or authorization information you receive from the dataset authors with me, so that it can help more users.
