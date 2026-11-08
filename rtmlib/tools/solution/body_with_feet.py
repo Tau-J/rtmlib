@@ -54,8 +54,8 @@ class BodyWithFeet:
     MODE = {
         'performance': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_x_8xb8-300e_humanart-a39d44ed.zip',  # noqa
-            'det_input_size': (640, 640),
+            'https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_l_v142_704x704.onnx',  # noqa
+            'det_input_size': (704, 704),
             'pose':
             'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-x_simcc-body7_pt-body7-halpe26_700e-384x288-7fb6e239_20230606.zip',  # noqa
             'pose_input_size': (288, 384),
@@ -70,8 +70,8 @@ class BodyWithFeet:
         },
         'balanced': {
             'det':
-            'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/yolox_m_8xb8-300e_humanart-c2c7a14a.zip',  # noqa
-            'det_input_size': (640, 640),
+            'https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_s_v142_512x512.onnx',  # noqa
+            'det_input_size': (512, 512),
             'pose':
             'https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmpose-m_simcc-body7_pt-body7-halpe26_700e-256x192-4d3e73dd_20230605.zip',  # noqa
             'pose_input_size': (192, 256),
@@ -99,7 +99,7 @@ class BodyWithFeet:
             backend (str, optional): Backend for inference ('onnxruntime' or 'opencv'). Default is 'onnxruntime'.
             device (str, optional): Device for inference ('cpu' or 'cuda'). Default is 'cpu'.
         """
-        from .. import YOLOX, RTMPose
+        from .. import YOLOX, RFDETR, RTMPose
 
         if pose is None:
             pose = self.MODE[mode]['pose']
@@ -109,10 +109,20 @@ class BodyWithFeet:
             det = self.MODE[mode]['det']
             det_input_size = self.MODE[mode]['det_input_size']
 
-        self.det_model = YOLOX(det,
-                               model_input_size=det_input_size,
-                               backend=backend,
-                               device=device)
+        if 'yolox' in det:
+            self.det_model = YOLOX(det,
+                                   model_input_size=det_input_size,
+                                   backend=backend,
+                                   device=device)
+        elif 'rfdetr' in det:
+            self.det_model = RFDETR(det,
+                                    model_input_size=det_input_size,
+                                    backend=backend,
+                                    device=device)
+        else:
+            raise ValueError(
+                f"Unsupported detection model: {det}. Please use a YOLOX or RFDETR model."
+            )
         self.pose_model = RTMPose(pose,
                                   model_input_size=pose_input_size,
                                   to_openpose=to_openpose,

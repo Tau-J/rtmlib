@@ -43,15 +43,15 @@ class Animal:
     MODE = {
         'performance': {
             'det':
-            'https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_x.onnx',  # noqa
-            'det_input_size': (640, 640),
+            'https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_l_v142_704x704.onnx',  # noqa
+            'det_input_size': (704, 704),
             'pose':
-            'https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-h-apt36k.onnx',  # noqa
-            'pose_input_size': (288, 384),
+            'https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-l-apt36k.onnx',  # noqa
+            'pose_input_size': (192, 256),
         },
         'lightweight': {
             'det':
-            'https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx',  # noqa
+            'https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_tiny.onnx',  # noqa # seems to not give class ids
             'det_input_size': (416, 416),
             'pose':
             'https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-s-apt36k.onnx',  # noqa
@@ -59,8 +59,8 @@ class Animal:
         },
         'balanced': {
             'det':
-            'https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_m.onnx',  # noqa
-            'det_input_size': (640, 640),
+            'https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_s_v142_512x512.onnx',  # noqa
+            'det_input_size': (512, 512),
             'pose':
             'https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/apt36k/vitpose-b-apt36k.onnx',  # noqa
             'pose_input_size': (192, 256),
@@ -78,7 +78,7 @@ class Animal:
                  backend: str = 'onnxruntime',
                  device: str = 'cpu'):
 
-        from .. import YOLOX, ViTPose
+        from .. import YOLOX, RFDETR, ViTPose
 
         if pose is None:
             pose = self.MODE[mode]['pose']
@@ -88,11 +88,22 @@ class Animal:
             det = self.MODE[mode]['det']
             det_input_size = self.MODE[mode]['det_input_size']
 
-        self.det_model = YOLOX(det,
-                               det_mode='multiclass',
-                               model_input_size=det_input_size,
-                               backend=backend,
-                               device=device)
+        if 'yolox' in det:
+            self.det_model = YOLOX(det,
+                                det_mode='multiclass',
+                                model_input_size=det_input_size,
+                                backend=backend,
+                                device=device)
+        elif 'rfdetr' in det:
+            self.det_model = RFDETR(det,
+                                det_mode='multiclass',
+                                model_input_size=det_input_size,
+                                backend=backend,
+                                device=device)
+        else:
+            raise ValueError(
+                f"Unsupported detection model: {det}. Please use a YOLOX or RFDETR model."
+            )
         self.det_categories = det_categories
         self.pose_model = ViTPose(pose,
                                   model_input_size=pose_input_size,
