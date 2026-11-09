@@ -138,6 +138,13 @@ class PoseTracker:
         to_openpose (bool): Whether to use openpose-style skeleton.
         backend (str): Backend of pose estimation model.
         device (str): Device of pose estimation model.
+
+    With ``tracking=True``, the poses returned by a call are in detection
+    order and ``track_ids_last_frame[i]`` is the track id of
+    ``keypoints[i]``. Poses whose box is smaller than ``MIN_AREA`` and
+    match no existing track are dropped from the output. With
+    ``tracking=False``, every pose is returned in detection order and no
+    track ids are assigned.
     """
     MIN_AREA = 1000
 
@@ -247,45 +254,43 @@ class PoseTracker:
         else:  # one-stage algorithm, e.g. rtmo
             keypoints, scores = self.pose_model(image)
 
-        if not self.tracking and self.det_frequency != 1:
+        # RTMPose3d's `keypoints` are in model-input space; boxes for
+        # tracking must come from the image-space 2D keypoints.
+        if pose_model_name == 'RTMPose3d':
+            bbox_keypoints = keypoints2d
+        else:
+            bbox_keypoints = keypoints
+
+        if not self.tracking:
             # without tracking
-            bboxes_current_frame = []
-            if pose_model_name == 'RTMPose3d':
-                for kpts in keypoints2d:
-                    bbox = pose_to_bbox(kpts)
-                    bboxes_current_frame.append(bbox)
-            else:
-                for kpts in keypoints:
-                    bbox = pose_to_bbox(kpts)
-                    bboxes_current_frame.append(bbox)
+            bboxes_current_frame = [
+                pose_to_bbox(kpts) for kpts in bbox_keypoints
+            ]
 
         else:
             # with tracking
-            if len(self.track_ids_last_frame) == 0:
-                self.next_id = len(self.bboxes_last_frame)
-                self.track_ids_last_frame = list(range(self.next_id))
-
             bboxes_current_frame = []
             track_ids_current_frame = []
-            for kpts in keypoints:
+            kept = []
+            for i, kpts in enumerate(bbox_keypoints):
                 bbox = pose_to_bbox(kpts)
 
                 track_id, _ = self.track_by_iou(bbox)
 
                 if track_id > -1:
+                    kept.append(i)
                     track_ids_current_frame.append(track_id)
                     bboxes_current_frame.append(bbox)
 
             self.track_ids_last_frame = track_ids_current_frame
-            # reorder keypoints, scores according to track_id
-            try:
-                keypoints = np.array(
-                    [keypoints[i] for i in self.track_ids_last_frame])
-                scores = np.array(
-                    [scores[i] for i in self.track_ids_last_frame])
-            except:  # noqa
-                # in case track_ids_current_frame is empty
-                return keypoints, scores,
+            # Keep only tracked poses, in detection order, so that
+            # `keypoints[i]` belongs to `track_ids_last_frame[i]`.
+            kept = np.asarray(kept, dtype=int)
+            keypoints = np.asarray(keypoints)[kept]
+            scores = np.asarray(scores)[kept]
+            if pose_model_name == 'RTMPose3d':
+                keypoints_simcc = np.asarray(keypoints_simcc)[kept]
+                keypoints2d = np.asarray(keypoints2d)[kept]
 
         self.bboxes_last_frame = bboxes_current_frame
         self.frame_cnt += 1
