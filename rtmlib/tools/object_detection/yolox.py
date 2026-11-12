@@ -1,6 +1,6 @@
 # Code modified from https://github.com/IDEA-Research/DWPose/blob/opencv_onnx/ControlNet-v1-1-nightly/annotator/dwpose/cv_ox_det.py  # noqa
 import warnings
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import cv2
 import numpy as np
@@ -29,7 +29,7 @@ class YOLOX(BaseTool):
     def __init__(self,
                  onnx_model: str,
                  model_input_size: tuple = (640, 640),
-                 det_mode: str = None,
+                 det_mode: Union[str, int, List[int]] = None,
                  nms_thr=0.45,
                  score_thr=0.7,
                  backend: str = 'onnxruntime',
@@ -61,6 +61,35 @@ class YOLOX(BaseTool):
             det_mode = mode
 
         self.det_mode = det_mode if det_mode is not None else 'human'
+        self.class_ids = None
+        det_mode_err_msg = (
+            'det_mode must be \'human\', \'multiclass\', a COCO class id, '
+            'or a list of COCO class ids. COCO classes are the indices of '
+            f'the following list:\n{self.COCO_CLASSES}'
+        )
+        if isinstance(self.det_mode, (int, np.integer)):
+            self.class_ids = [int(self.det_mode)]
+        elif isinstance(self.det_mode, (list, tuple, np.ndarray)):
+            for x in self.det_mode:
+                if not isinstance(x, (int, np.integer)):
+                    raise TypeError(
+                        f'Wrong det_mode value: Got element of type '
+                        f'{type(x).__name__}.\n{det_mode_err_msg}'
+                    )
+            self.class_ids = [int(x) for x in self.det_mode]
+        if self.class_ids is not None:
+            for cid in self.class_ids:
+                if not 0 <= cid < len(self.COCO_CLASSES) or not self.COCO_CLASSES[cid]:
+                    raise ValueError(
+                        f'Wrong det_mode value: {cid} is not a valid COCO '
+                        f'class id.\n{det_mode_err_msg}'
+                    )
+            warnings.warn(
+                'det_mode was set to only detect ' +
+                ', '.join(f'{cid} ({self.COCO_CLASSES[cid]})' for cid in self.class_ids),
+                UserWarning, stacklevel=2)
+            self.det_mode = 'class_ids'
+
         self.nms_thr = nms_thr
         self.score_thr = score_thr
 
@@ -169,7 +198,7 @@ class YOLOX(BaseTool):
                 final_boxes, final_cls_inds = np.array([]), np.array([])
 
         elif outputs.shape[-1] == 5:
-            # onnx contains nms module
+            # onnx contains nms module and does not output any class ID
 
             pack_dets = (outputs[0, :, :4], outputs[0, :, 4])
             final_boxes, final_scores = pack_dets
@@ -178,11 +207,28 @@ class YOLOX(BaseTool):
             isbbox = [i for i in isscore]
             final_boxes = final_boxes[isbbox]
 
-        if self.det_mode == 'multiclass':
+            # Set class IDs to 0 (person)
+            final_cls_inds = np.zeros(len(final_boxes), dtype=np.int64)
+
+        else:
+            raise ValueError(f'Unsupported YOLOX output shape: {outputs.shape}')
+
+        # Apply det_mode filtering.
+        if self.det_mode == 'human':
+            keep = final_cls_inds==0
+        elif self.det_mode == 'class_ids':
+            keep = np.isin(final_cls_inds, self.class_ids)
+        elif self.det_mode == 'multiclass':
+            keep = np.ones(final_cls_inds.shape[0], dtype=bool)
+        else:
+            raise NotImplementedError(
+                f'det_mode must be \'human\', \'multiclass\', a COCO class id, '
+                f'or a list of COCO class ids: {self.det_mode} is not supported.'
+            )
+        final_boxes = final_boxes[keep]
+        final_cls_inds = final_cls_inds[keep]
+
+        if self.det_mode in ('multiclass', 'class_ids'):
             return final_boxes, final_cls_inds
         elif self.det_mode == 'human':
             return final_boxes
-        else:
-            raise NotImplementedError(
-                f'det_mode must be \'human\' or \'multiclass\': {self.det_mode} is not supported.'
-            )

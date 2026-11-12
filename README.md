@@ -282,10 +282,17 @@ Notes:
 | :--------------------------------------------------------------------------------------------------------------------------: | :--------: | :-------: | :-------------------: |
 | [RTMDet-nano](https://download.openmmlab.com/mmpose/v1/projects/rtmposev1/onnx_sdk/rtmdet_nano_8xb32-300e_hand-267f9c8f.zip) |  320x320   |   76.0    | trained on 5 datasets |
 
+</details>
+
 <details open>
 <summary><b>Multi-class</b></summary>
 
+RFDETR models can detect both real human and COCO classes characters, and their detections are [more stable and accurate](https://github.com/Tau-J/rtmlib/issues/71#issuecomment-4128313210) than the YOLOX ones, including for persons.
+
+**Note:** YOLOX and RFDETR use the same classes but with different IDs
+
 ```
+# YOLOX
 COCO_CLASSES = [
     'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
     'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow',
@@ -295,6 +302,22 @@ COCO_CLASSES = [
     'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
     'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
     'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
+    'scissors', 'teddy bear', 'hair drier', 'toothbrush']
+
+# RFDETR
+COCO_CLASSES = [
+    'person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train',
+    'truck', 'boat', 'traffic light', 'fire hydrant', '', 'stop sign',
+    'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
+    'cow', 'elephant', 'bear', 'zebra', 'giraffe', '', 'backpack', 'umbrella',
+    '', '', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard',
+    'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
+    'surfboard', 'tennis racket', 'bottle', '', 'wine glass', 'cup', 'fork',
+    'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange',
+    'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair',
+    'couch', 'potted plant', 'bed', '', 'dining table', '', '', 'toilet', '',
+    'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
+    'oven', 'toaster', 'sink', 'refrigerator', '', 'book', 'clock', 'vase',
     'scissors', 'teddy bear', 'hair drier', 'toothbrush']
 ```
 
@@ -307,6 +330,13 @@ COCO_CLASSES = [
 |        [YOLOX-l](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_l.onnx)        |  640x640   |       50.1        | trained on coco |
 | [YOLOX-Darknet53](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_darknet.onnx) |  640x640   |       48.0        | trained on coco |
 |        [YOLOX-X](https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_x.onnx)        |  640x640   |       51.5        | trained on coco |
+|    [RFDETR-nano](https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_n_v142_384x384.onnx)    |    384x384   |    48.4    |    trained on COCO    |
+|    [RFDETR-s](https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_s_v142_512x512.onnx)     |    512x512     |    53.0    |    trained on COCO    |
+|    [RFDETR-m](https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_m_v142_576x576.onnx)     |    576x576     |    54.7    |    trained on COCO    |
+|   [RFDETR-l](https://huggingface.co/saifkhichi96/opendetect/resolve/main/rfdetr/rfdetr_l_v142_704x704.onnx)     |     704x704     |    56.5    |    trained on COCO    |
+
+
+</details>
 
 ### Pose Estimators
 
